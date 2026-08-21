@@ -1,28 +1,59 @@
 /**
- * EVELYN & YIMMY - WEDDING INVITATION
- * RSVP & Personalized Boarding Pass Generator
+ * EVELYN & YIMMY - THE WEDDING ISSUE
+ * RSVP Submission & Digital VIP Pass Generator
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initRsvpForm();
+  initRsvpModule();
 });
 
-function initRsvpForm() {
+function initRsvpModule() {
   const form = document.getElementById('rsvp-form');
-  const modal = document.getElementById('guest-pass-modal');
-  const closeModalBtn = document.getElementById('btn-close-pass-modal');
+  const passModal = document.getElementById('guest-pass-modal');
+  const closePassBtn = document.getElementById('btn-close-pass-modal');
   const printPassBtn = document.getElementById('btn-print-pass');
-  const whatsappShareBtn = document.getElementById('btn-send-rsvp-whatsapp');
+  const whatsappBtn = document.getElementById('btn-send-rsvp-whatsapp');
+  const attendanceGroup = document.getElementById('attendance-details-group');
 
   if (!form) return;
 
+  // Toggle details depending on attendance radio
+  const radios = form.querySelectorAll('input[name="attendance"]');
+  radios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'no') {
+        if (attendanceGroup) attendanceGroup.style.display = 'none';
+      } else {
+        if (attendanceGroup) attendanceGroup.style.display = 'grid';
+      }
+    });
+  });
+
+  // Handle Close Modal
+  if (closePassBtn && passModal) {
+    closePassBtn.addEventListener('click', () => passModal.classList.remove('active'));
+  }
+  if (passModal) {
+    passModal.addEventListener('click', (e) => {
+      if (e.target === passModal) passModal.classList.remove('active');
+    });
+  }
+
+  // Print Pass
+  if (printPassBtn) {
+    printPassBtn.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
+  // Handle Form Submit
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const name = document.getElementById('rsvp-name').value.trim();
     const phone = document.getElementById('rsvp-phone').value.trim();
     const attendance = form.querySelector('input[name="attendance"]:checked').value;
-    const guestsCount = document.getElementById('rsvp-guests').value;
+    const guests = document.getElementById('rsvp-guests').value;
     const guestNames = document.getElementById('rsvp-guest-names').value.trim();
     const dietary = document.getElementById('rsvp-dietary').value;
     const song = document.getElementById('rsvp-song').value.trim();
@@ -33,13 +64,15 @@ function initRsvpForm() {
       return;
     }
 
+    const reservationCode = 'EY-' + Math.floor(1000 + Math.random() * 9000);
+
     const rsvpData = {
-      id: 'EY-' + Date.now().toString().slice(-5),
+      code: reservationCode,
       date: new Date().toISOString(),
       name,
       phone,
       attendance,
-      guestsCount: attendance === 'si' ? guestsCount : '0',
+      guests: attendance === 'si' ? guests : '0',
       guestNames,
       dietary,
       song,
@@ -47,89 +80,41 @@ function initRsvpForm() {
     };
 
     // Save to LocalStorage
-    saveRsvpToLocal(rsvpData);
+    try {
+      const stored = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
+      stored.push(rsvpData);
+      localStorage.setItem('wedding_rsvps', JSON.stringify(stored));
+    } catch (err) {
+      console.warn('LocalStorage save error:', err);
+    }
 
     if (attendance === 'si') {
-      // Generate and display personalized Boarding Pass
-      renderPersonalizedPass(rsvpData);
-      openModal(modal);
+      // Update Digital Pass Modal
+      document.getElementById('pass-guest-name').textContent = name;
+      document.getElementById('pass-pases-count').textContent = `${guests} ${guests === '1' ? 'Pase' : 'Pases'}`;
+      document.getElementById('pass-code').textContent = reservationCode;
+
+      // WhatsApp Button link
+      if (whatsappBtn) {
+        let msg = `💍 *CONFIRMACIÓN DE ASISTENCIA MATRIMONIO EVELYN & YIMMY*\n\n`;
+        msg += `✨ *Invitado:* ${name}\n`;
+        msg += `🎟️ *Pases:* ${guests}\n`;
+        if (guestNames) msg += `👥 *Acompañante(s):* ${guestNames}\n`;
+        if (dietary !== 'ninguna') msg += `🥗 *Menú/Dieta:* ${dietary}\n`;
+        if (song) msg += `🎵 *Canción sugerida:* ${song}\n`;
+        if (message) msg += `💌 *Dedicatoria:* "${message}"\n`;
+        msg += `\n🔖 *Código de Reserva:* ${reservationCode}\n¡Nos vemos el 21 de Noviembre en Casa Pirque!`;
+
+        const encoded = encodeURIComponent(msg);
+        whatsappBtn.onclick = () => {
+          window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
+        };
+      }
+
+      if (passModal) passModal.classList.add('active');
     } else {
-      // Show sweet non-attendance thank you message
-      alert(`Muchas gracias ${name} por avisarnos. Te tendremos en nuestros corazones en este día especial.`);
+      alert(`Muchas gracias, ${name}, por notificarnos. Te tendremos en nuestros corazones en este día tan especial.`);
       form.reset();
     }
   });
-
-  if (closeModalBtn && modal) {
-    closeModalBtn.addEventListener('click', () => closeModal(modal));
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal(modal);
-    });
-  }
-
-  if (printPassBtn) {
-    printPassBtn.addEventListener('click', () => {
-      window.print();
-    });
-  }
-}
-
-function saveRsvpToLocal(data) {
-  try {
-    const list = JSON.parse(localStorage.getItem('wedding_rsvp_guests') || '[]');
-    list.push(data);
-    localStorage.setItem('wedding_rsvp_guests', JSON.stringify(list));
-  } catch (err) {
-    console.error('Error saving RSVP to localStorage:', err);
-  }
-}
-
-function renderPersonalizedPass(data) {
-  const passName = document.getElementById('pass-display-name');
-  const passGuests = document.getElementById('pass-display-guests');
-  const passDietary = document.getElementById('pass-display-dietary');
-  const passTicketId = document.getElementById('pass-display-id');
-  const whatsappBtn = document.getElementById('btn-send-rsvp-whatsapp');
-
-  if (passName) passName.textContent = data.name;
-  if (passGuests) passGuests.textContent = data.guestsCount === '1' ? '1 Invitado (Individual)' : `${data.guestsCount} Invitados`;
-  if (passDietary) passDietary.textContent = data.dietary;
-  if (passTicketId) passTicketId.textContent = data.id;
-
-  if (whatsappBtn) {
-    const isSingle = data.guestsCount === '1';
-    let textMsg = `¡Hola Evelyn y Yimmy! 💍✨\n\nConfirmé mi asistencia a su matrimonio en Casa Pirque:\n` +
-      `✈️ *Pasajero(a):* ${data.name}\n` +
-      `🎟️ *Pases reservados:* ${data.guestsCount} ${isSingle ? 'persona' : 'personas'}\n`;
-
-    if (data.guestNames) {
-      textMsg += `👥 *Acompañantes:* ${data.guestNames}\n`;
-    }
-    if (data.dietary && data.dietary !== 'Ninguna (Menú Tradicional)') {
-      textMsg += `🍽️ *Preferencia Menú:* ${data.dietary}\n`;
-    }
-    if (data.song) {
-      textMsg += `🎶 *Canción para la fiesta:* ${data.song}\n`;
-    }
-    if (data.message) {
-      textMsg += `💌 *Mensaje:* "${data.message}"\n`;
-    }
-    textMsg += `\n🧺 ¡Nos vemos el Sábado 21 de Noviembre con manta en mano para el pasto! 🌿🍾`;
-
-    const encoded = encodeURIComponent(textMsg);
-    whatsappBtn.href = `https://api.whatsapp.com/send?text=${encoded}`;
-    whatsappBtn.target = "_blank";
-  }
-}
-
-function openModal(modal) {
-  if (!modal) return;
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal(modal) {
-  if (!modal) return;
-  modal.classList.remove('open');
-  document.body.style.overflow = '';
 }
