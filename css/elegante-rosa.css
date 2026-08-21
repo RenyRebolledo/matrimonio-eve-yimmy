@@ -1,0 +1,137 @@
+/* ==========================================================
+   INVITACIÓN – ROSA ELEGANTE
+   ========================================================== */
+
+/* ---------- VARIABLES DE COLOR ---------- */
+:root {
+  --pink-deep:      #c0392b;   /* rosa oscuro (texto principal) */
+  --pink-soft:      #e74c3c;   /* rosa vivo (acentos) */
+  --pink-very-soft:#fdeef4;   /* fondo muy claro */
+  --gold-accent:    #d4af37;   /* detalle dorado */
+  --ivory:          #faf6ee;   /* fondo de tarjetas */
+}
+
+/* ---------- RESETEO BÁSICO ---------- */
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+
+/* ---------- FONDO GLOBAL ---------- */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--pink-very-soft);
+  color: var(--pink-deep);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- CONTENEDOR PRINCIPAL ---------- */
+.invitation {
+  background: var(--ivory);
+  max-width: 460px;
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+  overflow: hidden;
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  background: linear-gradient(135deg, var(--pink-soft), var(--pink-deep));
+  color: white;
+  text-align: center;
+  padding: 2.5rem 1rem 2rem;
+}
+.couple {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  margin-bottom: .2rem;
+}
+.amp { font-weight: normal; }
+.tagline {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+
+/* ---------- DETALLES ---------- */
+.details {
+  padding: 1.8rem 1.5rem;
+  text-align: center;
+}
+.date, .venue { font-weight: 600; margin-bottom: .6rem; }
+.invite { margin: 1rem 0; line-height: 1.5; font-size: .95rem; }
+
+/* ---------- BOTONES ---------- */
+.buttons { margin-top: 1.2rem; }
+.btn {
+  display: inline-block;
+  margin: .4rem;
+  padding: .7rem 1.4rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .25s, color .25s, box-shadow .25s;
+}
+.btn.primary {
+  background: var(--gold-accent);
+  color: var(--pink-deep);
+}
+.btn.primary:hover {
+  background: #c59b2d;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+.btn.secondary {
+  background: transparent;
+  border: 2px solid var(--pink-soft);
+  color: var(--pink-soft);
+}
+.btn.secondary:hover {
+  background: var(--pink-soft);
+  color: white;
+}
+
+/* ---------- PIE ---------- */
+.footer {
+  background: var(--pink-deep);
+  color: white;
+  text-align: center;
+  padding: .9rem;
+  font-size: .85rem;
+}
+
+/* ---------- MODAL RSVP ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal.hidden { display: none; }
+.modal-content {
+  background: var(--ivory);
+  padding: 1.6rem 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 380px;
+}
+.modal-content h2 { text-align: center; margin-bottom: 1rem; }
+.modal-content label,
+.modal-content fieldset { display: block; margin-bottom: .9rem; }
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: .4rem .6rem;
+  margin-top: .3rem;
+  border: 1px solid var(--pink-deep);
+  border-radius: 4px;
+}
+.modal-content button { margin-top: .8rem; }
+
+/* ---------- RESPONSIVO ---------- */
+@media (max-width: 480px) {
+  .invitation {margin: 0 1rem;}
+  .couple {font-size: 2.5rem;}
+}

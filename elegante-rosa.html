@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Invitación Rosa Elegante – Evelyn &amp; Yimmy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Google Fonts (Playfair Display & Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="css/elegante-rosa.css">
+</head>
+
+<body>
+  <main class="invitation">
+
+    <!-- ---------- HÉROE ---------- -->
+    <section class="hero">
+      <h1 class="couple">Evelyn <span class="amp">&amp;</span> Yimmy</h1>
+      <p class="tagline">Se casan</p>
+    </section>
+
+    <!-- ---------- DETALLES ---------- -->
+    <section class="details">
+      <p class="date"><strong>Sábado 21 de noviembre de 2026</strong></p>
+      <p class="venue">Casa Pirque • Región Metropolitana, Chile</p>
+
+      <p class="invite">
+        Te invitamos a compartir este día tan especial rodeados de <strong>elegancia y serenidad</strong>. Vístete con tu mejor atuendo formal y prepárate para una velada inolvidable.
+      </p>
+
+      <div class="buttons">
+        <a href="https://milistadenovios.cl/lista/40226"
+           class="btn primary"
+           target="_blank"
+           rel="noopener">Escoger Regalo</a>
+
+        <a href="#rsvp" class="btn secondary">Confirmar Asistencia</a>
+      </div>
+    </section>
+
+    <!-- ---------- PIE ---------- -->
+    <footer class="footer">
+      <p><strong>Código de vestimenta:</strong> Formal / Cóctel</p>
+    </footer>
+
+    <!-- ---------- MODAL RSVP ---------- -->
+    <section id="rsvp" class="modal hidden">
+      <div class="modal-content">
+        <h2>Confirma tu asistencia</h2>
+        <form id="rsvp-form">
+          <label>
+            Nombre y Apellido *
+            <input type="text" name="nombre" placeholder="Ej.: Marcela González" required>
+          </label>
+
+          <label>
+            Teléfono / WhatsApp
+            <input type="tel" name="telefono" placeholder="+56 9 1234 5678">
+          </label>
+
+          <fieldset>
+            <legend>¿Asistirás?</legend>
+            <label><input type="radio" name="asistencia" value="sí" checked> Sí</label>
+            <label><input type="radio" name="asistencia" value="no"> No</label>
+          </fieldset>
+
+          <label>
+            Número de invitados (incluyéndote)
+            <select name="pases">
+              <option value="1">1 (Solo yo)</option>
+              <option value="2">2 (Con acompañante)</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </label>
+
+          <button type="submit" class="btn primary">Enviar</button>
+          <button type="button" class="btn secondary close-modal">Cancelar</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script para abrir/cerrar el modal RSVP -->
+  <script>
+    document.querySelectorAll('a[href="#rsvp"]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('rsvp').classList.remove('hidden');
+      });
+    });
+    document.querySelectorAll('.close-modal').forEach(el => {
+      el.addEventListener('click', () => {
+        document.getElementById('rsvp').classList.add('hidden');
+      });
+    });
+  </script>
+</body>
+</html>
