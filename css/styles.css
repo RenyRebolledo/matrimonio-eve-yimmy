@@ -1,35 +1,34 @@
 /* ==========================================================================
    EVELYN & YIMMY — NUESTRO MATRIMONIO
-   Vogue Editorial & Multi-Theme Design System
-   (Clásico Vogue • Campestre Rústico • Florido Romántico)
+   Vogue Editorial & 4-Theme Luxury Design System
+   (Vogue Editorial • Campestre Rústico • Clásico Tradicional • Florido Romántico)
    ========================================================================== */
 
 /* ---------- 1. CSS VARIABLES & THEMES ---------- */
 :root {
-  /* Default: Clásico Vogue & Oro Champán */
-  --bg-main: #FAF9F6;              /* Silky Editorial Ivory */
-  --bg-surface: #FFFFFF;           /* Crisp White */
-  --bg-dark: #121212;              /* Deep Noir */
-  --bg-dark-surface: #1C1C1C;      /* Charcoal Card */
+  /* Default: Vogue Editorial (Negro & Oro) */
+  --bg-main: #FAF9F6;
+  --bg-surface: #FFFFFF;
+  --bg-dark: #121212;
+  --bg-dark-surface: #1C1C1C;
   --bg-card: #FFFFFF;
 
-  --text-main: #1C1B1A;            /* Rich Ebony */
-  --text-muted: #666360;           /* Refined Neutral Gray */
-  --text-light: #F8F7F4;           /* Cream White for dark sections */
+  --text-main: #1C1B1A;
+  --text-muted: #666360;
+  --text-light: #F8F7F4;
   --text-light-muted: #A8A5A0;
 
-  --gold-primary: #C5A059;         /* Champagne Warm Gold */
+  --gold-primary: #C5A059;
   --gold-light: #E5C378;
   --gold-dark: #9E7B35;
   --gold-gradient: linear-gradient(135deg, #C5A059 0%, #E8CD8C 50%, #A8833E 100%);
-  --gold-gradient-soft: linear-gradient(135deg, rgba(197, 160, 89, 0.12) 0%, rgba(232, 205, 140, 0.04) 100%);
 
   --glow-color-1: rgba(197, 160, 89, 0.08);
   --glow-color-2: rgba(229, 195, 120, 0.05);
 
   --border-hairline: 1px solid rgba(28, 27, 26, 0.12);
   --border-gold: 1px solid rgba(197, 160, 89, 0.45);
-  --border-gold-strong: 1px solid #C5A059;
+  --border-radius-card: 2px;
   --shadow-editorial: 0 8px 24px rgba(0, 0, 0, 0.05);
   --shadow-hover: 0 16px 36px rgba(0, 0, 0, 0.1);
   --shadow-gold: 0 6px 20px rgba(197, 160, 89, 0.25);
@@ -43,8 +42,8 @@
   --transition-smooth: all 0.35s var(--ease-editorial);
 }
 
-/* THEME 1: CLÁSICO VOGUE */
-body.theme-clasico {
+/* THEME 1: VOGUE EDITORIAL (Negro, Marfil & Oro) */
+body.theme-vogue {
   --bg-main: #FAF9F6;
   --bg-surface: #FFFFFF;
   --bg-dark: #121212;
@@ -59,42 +58,76 @@ body.theme-clasico {
   --gold-gradient: linear-gradient(135deg, #C5A059 0%, #E8CD8C 50%, #A8833E 100%);
   --glow-color-1: rgba(197, 160, 89, 0.08);
   --glow-color-2: rgba(229, 195, 120, 0.05);
+  --border-gold: 1px solid rgba(197, 160, 89, 0.45);
+  --border-radius-card: 2px;
+  --font-serif: 'Italiana', 'Cinzel', serif;
+  --font-script: 'Pinyon Script', cursive;
 }
 
-/* THEME 2: CAMPESTRE RÚSTICO & SALVIA */
+/* THEME 2: CAMPESTRE RÚSTICO (Kraft, Lino & Verde Eucalipto) */
 body.theme-campestre {
-  --bg-main: #F4F1EA;              /* Warm Linen / Kraft tone */
-  --bg-surface: #FAF8F5;
-  --bg-dark: #2B3A2C;              /* Deep Forest Olive */
-  --bg-dark-surface: #202B21;
-  --text-main: #242E25;            /* Dark Botanical Slate */
-  --text-muted: #566657;           /* Sage Eucalyptus */
-  --text-light: #F5F7F4;
-  --text-light-muted: #A3B5A4;
-  --gold-primary: #5B7B58;         /* Sage Olive Accent */
+  --bg-main: #F1ECE1;              /* Warm Kraft / Linen Paper tone */
+  --bg-surface: #FAF7F0;
+  --bg-dark: #2B3D2B;              /* Deep Forest Olive */
+  --bg-dark-surface: #202E20;
+  --text-main: #243024;            /* Dark Botanical Slate */
+  --text-muted: #526B53;           /* Sage Eucalyptus */
+  --text-light: #F5F8F4;
+  --text-light-muted: #A3B8A4;
+  --gold-primary: #527A50;         /* Sage Green Accent */
   --gold-light: #8BAE88;
-  --gold-dark: #3F573C;
-  --gold-gradient: linear-gradient(135deg, #5B7B58 0%, #8BAE88 50%, #3F573C 100%);
-  --glow-color-1: rgba(91, 123, 88, 0.12);
+  --gold-dark: #375436;
+  --gold-gradient: linear-gradient(135deg, #527A50 0%, #88AF85 50%, #375436 100%);
+  --glow-color-1: rgba(82, 122, 80, 0.12);
   --glow-color-2: rgba(139, 174, 136, 0.08);
+  --border-gold: 1px solid rgba(82, 122, 80, 0.45);
+  --border-radius-card: 6px;
+  --font-serif: 'Playfair Display', 'Cormorant Garamond', serif;
+  --font-script: 'Alex Brush', cursive;
 }
 
-/* THEME 3: FLORIDO & ROSA EMPOLVADO */
-body.theme-florido {
-  --bg-main: #FDF6F7;              /* Delicate Petal Cream */
+/* THEME 3: CLÁSICO TRADICIONAL (Blanco Perla, Azul Noche & Oro Clásico) */
+body.theme-tradicional {
+  --bg-main: #FCFBF9;              /* Pure Royal Pearl */
   --bg-surface: #FFFFFF;
-  --bg-dark: #361E25;              /* Velvet Burgundy */
-  --bg-dark-surface: #2B151B;
-  --text-main: #2A171D;            /* Deep Wine Plum */
-  --text-muted: #73545D;           /* Muted Dusty Rose */
+  --bg-dark: #101E2E;              /* Midnight Royal Navy */
+  --bg-dark-surface: #0B1520;
+  --text-main: #132238;            /* Noble Navy text */
+  --text-muted: #52667A;
+  --text-light: #F8FAFC;
+  --text-light-muted: #9BB0C7;
+  --gold-primary: #D4AF37;         /* Royal Gold Foil */
+  --gold-light: #F3E5AB;
+  --gold-dark: #A68218;
+  --gold-gradient: linear-gradient(135deg, #D4AF37 0%, #F5E6B3 50%, #A68218 100%);
+  --glow-color-1: rgba(212, 175, 55, 0.1);
+  --glow-color-2: rgba(16, 30, 46, 0.08);
+  --border-gold: 1px solid rgba(212, 175, 55, 0.45);
+  --border-radius-card: 3px;
+  --font-serif: 'Cormorant Garamond', 'Cinzel', serif;
+  --font-script: 'Great Vibes', cursive;
+}
+
+/* THEME 4: FLORIDO ROMÁNTICO (Acuarela Rosa Pastel & Peonías) */
+body.theme-florido {
+  --bg-main: #FDF4F6;              /* Soft Petal Blush Cream */
+  --bg-surface: #FFFFFF;
+  --bg-dark: #3A1E26;              /* Velvet Wine Plum */
+  --bg-dark-surface: #2E151C;
+  --text-main: #2E1A21;            /* Deep Wine Plum */
+  --text-muted: #7A535E;           /* Muted Dusty Rose */
   --text-light: #FDF5F6;
   --text-light-muted: #BFA5AC;
-  --gold-primary: #C97A87;         /* Rose Gold Floral */
-  --gold-light: #EAA8B2;
-  --gold-dark: #9C4B59;
-  --gold-gradient: linear-gradient(135deg, #C97A87 0%, #EAA8B2 50%, #9C4B59 100%);
-  --glow-color-1: rgba(201, 122, 135, 0.12);
-  --glow-color-2: rgba(234, 168, 178, 0.08);
+  --gold-primary: #D47B8B;         /* Dusty Rose Watercolor Bloom */
+  --gold-light: #F7BAC4;
+  --gold-dark: #A8495A;
+  --gold-gradient: linear-gradient(135deg, #D47B8B 0%, #F5B8C2 50%, #A8495A 100%);
+  --glow-color-1: rgba(212, 123, 139, 0.12);
+  --glow-color-2: rgba(247, 186, 196, 0.08);
+  --border-gold: 1px solid rgba(212, 123, 139, 0.45);
+  --border-radius-card: 6px;
+  --font-serif: 'Playfair Display', 'Italiana', serif;
+  --font-script: 'Pinyon Script', cursive;
 }
 
 /* ---------- 2. RESET & BASE STYLES ---------- */
@@ -173,7 +206,7 @@ button {
   background: none;
 }
 
-/* ---------- 3. TOP STYLE SELECTOR BAR ---------- */
+/* ---------- 3. TOP STYLE SELECTOR BAR (4 ESTILOS) ---------- */
 .top-style-selector {
   position: fixed;
   top: 0;
@@ -182,8 +215,8 @@ button {
   background: var(--bg-dark);
   color: #fff;
   z-index: 95;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.35rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.8rem;
   transition: var(--transition-smooth);
 }
 
@@ -193,39 +226,42 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
   flex-wrap: wrap;
 }
 
 .style-selector-title {
-  font-size: 0.72rem;
-  letter-spacing: 0.15em;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold-light);
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.25rem;
 }
 
 .style-buttons {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .style-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.75rem;
+  gap: 0.3rem;
+  padding: 0.25rem 0.7rem;
   border-radius: 20px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.75);
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   transition: var(--transition-smooth);
+  white-space: nowrap;
 }
 
 .style-btn:hover {
@@ -244,7 +280,7 @@ button {
 
 /* Mobile Drawer Theme Box */
 .drawer-theme-box {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   text-align: center;
   width: 100%;
 }
@@ -255,12 +291,12 @@ button {
   color: var(--gold-light);
   font-weight: 700;
   display: block;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
 }
 .drawer-theme-btns {
   display: flex;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   flex-wrap: wrap;
 }
 
@@ -313,25 +349,25 @@ button {
 /* ---------- 5. HEADER & NAVIGATION ---------- */
 .vogue-header {
   position: fixed;
-  top: 36px; /* Offset for top style selector */
+  top: 38px;
   left: 0;
   width: 100%;
   z-index: 90;
   background: rgba(250, 249, 246, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(197, 160, 89, 0.25);
+  border-bottom: 1px solid var(--border-gold);
   transition: var(--transition-smooth);
 }
 
 body.theme-campestre .vogue-header {
-  background: rgba(244, 241, 234, 0.94);
-  border-bottom-color: rgba(91, 123, 88, 0.25);
+  background: rgba(241, 236, 225, 0.94);
 }
-
+body.theme-tradicional .vogue-header {
+  background: rgba(252, 251, 249, 0.94);
+}
 body.theme-florido .vogue-header {
-  background: rgba(253, 246, 247, 0.94);
-  border-bottom-color: rgba(201, 122, 135, 0.25);
+  background: rgba(253, 244, 246, 0.94);
 }
 
 .header-inner {
@@ -366,12 +402,12 @@ body.theme-florido .vogue-header {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.1rem;
+  gap: 1rem;
 }
 
 .nav-item {
-  font-size: 0.74rem;
-  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 500;
   color: var(--text-muted);
@@ -384,15 +420,15 @@ body.theme-florido .vogue-header {
 }
 
 .nav-btn-rsvp {
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 700;
   background: var(--bg-dark);
   color: var(--gold-primary);
-  padding: 0.55rem 1rem;
+  padding: 0.5rem 0.9rem;
   border: 1px solid var(--gold-primary);
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: var(--transition-smooth);
 }
 .nav-btn-rsvp:hover {
@@ -436,7 +472,7 @@ body.theme-florido .vogue-header {
 }
 .drawer-header {
   text-align: center;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 .drawer-script {
   font-family: var(--font-script);
@@ -456,39 +492,39 @@ body.theme-florido .vogue-header {
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 0.85rem;
   width: 100%;
   max-width: 290px;
 }
 .drawer-link {
   font-family: var(--font-display);
   font-size: 0.95rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #fff;
   transition: color 0.3s ease;
   display: block;
-  padding: 0.25rem;
+  padding: 0.2rem;
 }
 .drawer-link:hover {
   color: var(--gold-primary);
 }
 .drawer-cta {
   display: block;
-  margin-top: 0.8rem;
-  padding: 0.85rem;
+  margin-top: 0.6rem;
+  padding: 0.8rem;
   background: var(--gold-gradient);
   color: var(--bg-dark);
   font-weight: 700;
   font-size: 0.8rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
 }
 
 /* ---------- 6. HERO / COVER SECTION ---------- */
 .hero-cover {
-  padding: 8rem 1rem 3.5rem;
+  padding: 8.5rem 1rem 3.5rem;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -501,6 +537,7 @@ body.theme-florido .vogue-header {
   max-width: 860px;
   background: var(--bg-surface);
   border: 1px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
   box-shadow: var(--shadow-editorial);
   padding: 2.5rem 1.4rem;
   text-align: center;
@@ -565,12 +602,14 @@ body.theme-florido .vogue-header {
   padding: 6px;
   background: var(--bg-surface);
   border: 1px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 .hero-photo {
   width: 100%;
   height: clamp(260px, 45vw, 360px);
   object-fit: cover;
+  border-radius: var(--border-radius-card);
 }
 .frame-tag {
   position: absolute;
@@ -588,6 +627,7 @@ body.theme-florido .vogue-header {
   max-width: 90%;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-radius: 2px;
 }
 
 /* Countdown */
@@ -666,7 +706,7 @@ body.theme-florido .vogue-header {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: var(--transition-smooth);
   width: 100%;
@@ -695,7 +735,7 @@ body.theme-florido .vogue-header {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: var(--transition-smooth);
   width: 100%;
 }
@@ -766,7 +806,7 @@ body.theme-florido .vogue-header {
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 2rem 1.4rem;
   text-align: center;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: var(--transition-smooth);
 }
 .editorial-card:hover {
@@ -837,7 +877,7 @@ body.theme-florido .vogue-header {
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: var(--transition-smooth);
   width: 100%;
 }
@@ -928,7 +968,7 @@ body.theme-florido .vogue-header {
   background: var(--bg-surface);
   border: 1px solid rgba(28, 27, 26, 0.1);
   padding: 1rem 1.2rem;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   flex: 1;
   box-shadow: var(--shadow-editorial);
 }
@@ -955,6 +995,7 @@ body.theme-florido .vogue-header {
   align-items: center;
   background: var(--bg-surface);
   border: 1px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
   padding: 1.8rem 1.2rem;
   box-shadow: var(--shadow-editorial);
 }
@@ -1000,7 +1041,7 @@ body.theme-florido .vogue-header {
   width: 100%;
   height: clamp(220px, 35vw, 300px);
   object-fit: cover;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
 }
 
 /* Lookbook / Dress Code */
@@ -1017,6 +1058,7 @@ body.theme-florido .vogue-header {
 .lookbook-card {
   background: var(--bg-surface);
   border: 1px solid rgba(28, 27, 26, 0.12);
+  border-radius: var(--border-radius-card);
   box-shadow: var(--shadow-editorial);
   overflow: hidden;
   transition: var(--transition-smooth);
@@ -1045,6 +1087,7 @@ body.theme-florido .vogue-header {
   padding: 0.35rem 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
+  border-radius: 2px;
 }
 .lookbook-body {
   padding: 1.5rem 1.25rem;
@@ -1091,7 +1134,7 @@ body.theme-florido .vogue-header {
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 2.2rem 1.4rem;
   text-align: center;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1131,7 +1174,7 @@ body.theme-florido .vogue-header {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: var(--transition-smooth);
   width: 100%;
 }
@@ -1156,7 +1199,7 @@ body.theme-florido .vogue-header {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: var(--transition-smooth);
   width: 100%;
 }
@@ -1198,7 +1241,7 @@ body.theme-florido .vogue-header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   transition: var(--transition-smooth);
 }
@@ -1222,10 +1265,13 @@ body.theme-florido .vogue-header {
   flex-shrink: 0;
 }
 body.theme-campestre .ch-num {
-  background: rgba(91, 123, 88, 0.15);
+  background: rgba(82, 122, 80, 0.15);
+}
+body.theme-tradicional .ch-num {
+  background: rgba(212, 175, 55, 0.15);
 }
 body.theme-florido .ch-num {
-  background: rgba(201, 122, 135, 0.15);
+  background: rgba(212, 123, 139, 0.15);
 }
 .ch-text {
   font-size: 0.85rem;
@@ -1264,7 +1310,7 @@ body.theme-florido .ch-num {
   text-transform: uppercase;
   color: var(--text-muted);
   border: 1px solid rgba(28, 27, 26, 0.15);
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: var(--transition-smooth);
 }
 .filter-btn.active, .filter-btn:hover {
@@ -1284,7 +1330,7 @@ body.theme-florido .ch-num {
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: var(--transition-smooth);
   width: 100%;
 }
@@ -1307,6 +1353,7 @@ body.theme-florido .ch-num {
   background: var(--bg-surface);
   padding: 8px;
   border: 1px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
   box-shadow: var(--shadow-editorial);
   cursor: pointer;
   transition: var(--transition-smooth);
@@ -1318,6 +1365,7 @@ body.theme-florido .ch-num {
   width: 100%;
   height: 220px;
   object-fit: cover;
+  border-radius: var(--border-radius-card);
 }
 .gallery-meta {
   padding: 0.6rem 0.2rem 0.2rem;
@@ -1350,6 +1398,7 @@ body.theme-florido .ch-num {
   margin: 0 auto;
   background: var(--bg-surface);
   border: 1px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
   padding: 2.2rem 1.25rem;
   box-shadow: var(--shadow-editorial);
 }
@@ -1411,7 +1460,7 @@ body.theme-florido .ch-num {
   font-family: var(--font-sans);
   font-size: 16px;
   color: var(--text-main);
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: border-color 0.3s ease;
 }
 .rsvp-form input:focus,
@@ -1444,7 +1493,7 @@ body.theme-florido .ch-num {
   gap: 0.5rem;
   padding: 0.85rem;
   border: 1px solid rgba(28, 27, 26, 0.2);
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   background: rgba(0, 0, 0, 0.02);
   font-size: 0.8rem;
   line-height: 1.35;
@@ -1472,7 +1521,7 @@ body.theme-florido .ch-num {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   box-shadow: 0 4px 15px rgba(37, 211, 102, 0.25);
   transition: var(--transition-smooth);
   width: 100%;
@@ -1545,7 +1594,7 @@ body.theme-florido .ch-num {
   overflow-y: auto;
   border: 1px solid var(--border-gold);
   padding: 2rem 1.25rem;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   position: relative;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
@@ -1580,6 +1629,7 @@ body.theme-florido .ch-num {
   border: 1px solid rgba(28, 27, 26, 0.1);
   padding: 1rem;
   margin-bottom: 1.2rem;
+  border-radius: var(--border-radius-card);
 }
 .bank-row {
   display: flex;
@@ -1619,7 +1669,7 @@ body.theme-florido .ch-num {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
   transition: var(--transition-smooth);
 }
 .btn-copy-bank:hover {
@@ -1637,6 +1687,7 @@ body.theme-florido .ch-num {
 .pass-ticket-render {
   background: var(--bg-surface);
   border: 1px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
   padding: 1.4rem 1rem;
   text-align: center;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
@@ -1725,7 +1776,7 @@ body.theme-florido .ch-num {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
 }
 .btn-vogue-print {
   display: flex;
@@ -1740,7 +1791,7 @@ body.theme-florido .ch-num {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--border-radius-card);
 }
 
 /* Lightbox Modal */
@@ -1814,14 +1865,14 @@ body.theme-florido .ch-num {
     display: block;
   }
   .top-style-selector {
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem 0.4rem;
   }
   .style-selector-title {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
   }
   .style-btn {
-    padding: 0.2rem 0.55rem;
-    font-size: 0.65rem;
+    padding: 0.18rem 0.45rem;
+    font-size: 0.62rem;
   }
   .vogue-header {
     top: 32px;

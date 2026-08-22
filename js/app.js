@@ -15,14 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   0. THEME SWITCHER (Campestre • Clásico • Florido)
+   0. THEME SWITCHER (🖤 Vogue • 🌿 Campestre • ✨ Clásico • 🌸 Florido)
    ========================================================================== */
 function initThemeSwitcher() {
   const themeBtns = document.querySelectorAll('.style-btn');
-  const validThemes = ['theme-campestre', 'theme-clasico', 'theme-florido'];
+  const validThemes = ['theme-vogue', 'theme-campestre', 'theme-tradicional', 'theme-florido'];
 
   function applyTheme(themeName) {
-    if (!validThemes.includes(themeName)) themeName = 'theme-clasico';
+    if (!validThemes.includes(themeName)) themeName = 'theme-vogue';
 
     validThemes.forEach(t => document.body.classList.remove(t));
     document.body.classList.add(themeName);
@@ -36,16 +36,16 @@ function initThemeSwitcher() {
     });
 
     try {
-      localStorage.setItem('wedding_style_theme', themeName);
+      localStorage.setItem('wedding_style_theme_v2', themeName);
     } catch (e) {
       console.warn('LocalStorage theme error:', e);
     }
   }
 
-  // Load saved theme or default to clasico
-  let savedTheme = 'theme-clasico';
+  // Load saved theme or default to theme-vogue
+  let savedTheme = 'theme-vogue';
   try {
-    savedTheme = localStorage.getItem('wedding_style_theme') || 'theme-clasico';
+    savedTheme = localStorage.getItem('wedding_style_theme_v2') || 'theme-vogue';
   } catch (e) {}
 
   applyTheme(savedTheme);
