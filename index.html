@@ -705,14 +705,121 @@
     </div>
   </div>
 
-  <!-- MODAL: LIGHTBOX DE FOTOS -->
+  <!-- MODAL: SUBIR FOTO AL ÁLBUM COMPARTIDO -->
+  <div class="modal-overlay" id="upload-photo-modal">
+    <div class="modal-vogue-card modal-upload-card">
+      <button class="modal-close-btn" id="btn-close-upload-modal" aria-label="Cerrar modal">
+        <i class="ri-close-line"></i>
+      </button>
+
+      <div class="modal-header">
+        <i class="ri-camera-lens-line modal-icon"></i>
+        <h3 class="modal-title">Subir Foto al Álbum</h3>
+        <p class="modal-desc">Tu foto será visible en tiempo real para todos los invitados y los novios.</p>
+      </div>
+
+      <form id="upload-photo-form" class="upload-photo-form">
+        <!-- Photo Selector / Preview Area -->
+        <div class="upload-dropzone" id="upload-dropzone">
+          <input type="file" id="photo-modal-file-input" accept="image/*" style="display: none;" required>
+          <div class="dropzone-placeholder" id="dropzone-placeholder">
+            <i class="ri-image-add-line"></i>
+            <span>Toca aquí para seleccionar una foto o tomar una con la cámara</span>
+          </div>
+          <div class="dropzone-preview" id="dropzone-preview" style="display: none;">
+            <img id="preview-image" src="" alt="Vista previa">
+            <button type="button" class="btn-change-photo" id="btn-change-photo">
+              <i class="ri-refresh-line"></i> Cambiar Foto
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="upload-author">¿Quién sube la foto? (Tu Nombre o Familia) *</label>
+          <input type="text" id="upload-author" placeholder="Ej.: Tía Carmen / Familia Soto" required>
+        </div>
+
+        <div class="form-group">
+          <label for="upload-caption">Dedicatoria o Descripción *</label>
+          <textarea id="upload-caption" rows="2" placeholder="Ej.: ¡Celebrando con los novios! 🎉" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="upload-category">Categoría</label>
+          <select id="upload-category">
+            <option value="invitados">Fotos de Invitados</option>
+            <option value="desafios">Desafío de Fotos 📸</option>
+            <option value="lugar">Casa Pirque</option>
+          </select>
+        </div>
+
+        <div class="upload-submit-box">
+          <button type="submit" class="btn-vogue-gold" id="btn-submit-photo" style="width: 100%;">
+            <i class="ri-upload-cloud-2-line"></i>
+            <span>Publicar Foto para Todos</span>
+          </button>
+          <div class="upload-progress-box" id="upload-progress-box" style="display: none;">
+            <div class="upload-spinner"><i class="ri-loader-4-line ri-spin"></i></div>
+            <span class="upload-progress-text">Subiendo y sincronizando foto...</span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: LIGHTBOX SOCIAL (FOTO GRANDE + LIKES + COMENTARIOS) -->
   <div class="lightbox-overlay" id="lightbox-modal">
-    <button class="lightbox-close" id="lightbox-close"><i class="ri-close-line"></i></button>
-    <div class="lightbox-content">
-      <img src="" alt="" id="lightbox-img" class="lightbox-img">
-      <div class="lightbox-caption">
-        <h4 id="lightbox-title">Título</h4>
-        <p id="lightbox-desc">Descripción</p>
+    <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar foto"><i class="ri-close-line"></i></button>
+    <div class="lightbox-card-container">
+      
+      <!-- Left / Top: Photo Media -->
+      <div class="lightbox-photo-panel">
+        <img src="" alt="" id="lightbox-img" class="lightbox-img">
+      </div>
+
+      <!-- Right / Bottom: Details, Likes & Comments Thread -->
+      <div class="lightbox-social-panel">
+        <div class="lightbox-header-info">
+          <div class="lightbox-author-badge">
+            <i class="ri-user-heart-line"></i>
+            <span id="lightbox-author">Autor</span>
+          </div>
+          <span class="lightbox-time" id="lightbox-time">Hace un momento</span>
+        </div>
+
+        <p class="lightbox-caption-text" id="lightbox-desc">Descripción</p>
+
+        <!-- Social Action Bar (Like count & Like Button) -->
+        <div class="lightbox-actions-bar">
+          <button class="btn-lightbox-like" id="btn-lightbox-like">
+            <i class="ri-heart-line" id="lightbox-like-icon"></i>
+            <span id="lightbox-like-label">Me gusta</span>
+            (<span id="lightbox-like-count">0</span>)
+          </button>
+          <span class="lightbox-comments-total" id="lightbox-comments-total">0 comentarios</span>
+        </div>
+
+        <!-- Comments List -->
+        <div class="lightbox-comments-section">
+          <h5 class="comments-heading"><i class="ri-chat-1-line"></i> Comentarios</h5>
+          <div class="comments-list" id="comments-list">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Add Comment Form -->
+        <form class="lightbox-comment-form" id="lightbox-comment-form">
+          <div class="comment-inputs-row">
+            <input type="text" id="comment-author-input" placeholder="Tu nombre..." required>
+            <div class="comment-submit-wrap">
+              <input type="text" id="comment-text-input" placeholder="Escribe un comentario..." required>
+              <button type="submit" class="btn-send-comment" title="Enviar comentario">
+                <i class="ri-send-plane-fill"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+
       </div>
     </div>
   </div>

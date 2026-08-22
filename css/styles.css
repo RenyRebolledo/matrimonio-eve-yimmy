@@ -1566,43 +1566,478 @@ body.theme-florido .ch-num {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
 }
-.gallery-item {
+/* ==========================================================================
+   8.1 SOCIAL PHOTO GALLERY (Cards, Likes & Comments)
+   ========================================================================== */
+.gallery-social-card {
   background: var(--bg-surface);
-  padding: 8px;
   border: 1px solid var(--border-gold);
   border-radius: var(--border-radius-card);
   box-shadow: var(--shadow-editorial);
-  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   transition: var(--transition-smooth);
 }
-.gallery-item:hover {
+.gallery-social-card:hover {
   border-color: var(--gold-primary);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
-.gallery-item img {
+
+.gallery-card-img-wrap {
+  position: relative;
+  overflow: hidden;
+  height: 230px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.05);
+}
+.gallery-card-img-wrap img {
   width: 100%;
-  height: 220px;
+  height: 100%;
   object-fit: cover;
-  border-radius: var(--border-radius-card);
+  transition: transform 0.5s ease;
 }
-.gallery-meta {
-  padding: 0.6rem 0.2rem 0.2rem;
+.gallery-card-img-wrap:hover img {
+  transform: scale(1.04);
+}
+.gallery-card-hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  color: #fff;
+  opacity: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: opacity 0.3s ease;
+}
+.gallery-card-hover-overlay i {
+  font-size: 1.6rem;
+  color: var(--gold-light);
+}
+.gallery-card-img-wrap:hover .gallery-card-hover-overlay {
+  opacity: 1;
+}
+
+.gallery-card-body {
+  padding: 0.9rem 1rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.gallery-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 0.4rem;
   font-size: 0.72rem;
 }
-.gallery-caption {
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 80%;
-}
-.gallery-likes {
-  color: #c0392b;
+.gallery-card-author {
+  font-weight: 700;
+  color: var(--text-main);
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 65%;
+}
+.gallery-card-author i {
+  color: var(--gold-primary);
+}
+.gallery-card-time {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+.gallery-card-caption {
+  font-size: 0.82rem;
+  color: var(--text-main);
+  line-height: 1.4;
+  margin-bottom: 0.8rem;
+  flex: 1;
+}
+
+.gallery-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(28, 27, 26, 0.08);
+}
+.btn-card-like {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 0.25rem 0.5rem;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.03);
+  transition: var(--transition-smooth);
+}
+.btn-card-like:hover {
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.08);
+}
+.btn-card-like.liked {
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.12);
+}
+.btn-card-like.liked i {
+  animation: heartPop 0.35s cubic-bezier(0.17, 0.89, 0.32, 1.49);
+}
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.btn-card-comments {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+.btn-card-comments:hover {
+  color: var(--text-main);
+}
+
+/* Upload Modal Styles */
+.modal-upload-card {
+  max-width: 520px;
+}
+.upload-dropzone {
+  border: 2px dashed var(--border-gold);
+  border-radius: var(--border-radius-card);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.02);
+  transition: var(--transition-smooth);
+}
+.upload-dropzone:hover {
+  border-color: var(--gold-primary);
+  background: rgba(0, 0, 0, 0.04);
+}
+.dropzone-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+.dropzone-placeholder i {
+  font-size: 2.2rem;
+  color: var(--gold-primary);
+}
+.dropzone-preview {
+  position: relative;
+  text-align: center;
+}
+.dropzone-preview img {
+  max-height: 180px;
+  max-width: 100%;
+  margin: 0 auto 0.6rem;
+  border-radius: 4px;
+  object-fit: contain;
+}
+.btn-change-photo {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.05);
+}
+.upload-submit-box {
+  margin-top: 1.2rem;
+}
+.upload-progress-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.8rem;
+  color: var(--gold-dark);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   8.2 SOCIAL LIGHTBOX MODAL (Full Photo + Comments Thread)
+   ========================================================================== */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 0.75rem;
+}
+.lightbox-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  font-size: 2rem;
+  color: #fff;
+  z-index: 210;
+  padding: 0.5rem;
+}
+.lightbox-card-container {
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .lightbox-card-container {
+    grid-template-columns: 1.15fr 1fr;
+    max-height: 85vh;
+  }
+}
+
+.lightbox-photo-panel {
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  max-height: 45vh;
+}
+@media (min-width: 768px) {
+  .lightbox-photo-panel {
+    max-height: 85vh;
+  }
+}
+.lightbox-photo-panel img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.lightbox-social-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.2rem;
+  background: var(--bg-surface);
+  overflow-y: auto;
+  max-height: 45vh;
+}
+@media (min-width: 768px) {
+  .lightbox-social-panel {
+    max-height: 85vh;
+    padding: 1.6rem 1.4rem;
+  }
+}
+
+.lightbox-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.lightbox-author-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.lightbox-author-badge i {
+  color: var(--gold-primary);
+}
+.lightbox-time {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+.lightbox-caption-text {
+  font-size: 0.88rem;
+  color: var(--text-main);
+  line-height: 1.45;
+  margin-bottom: 0.8rem;
+}
+
+.lightbox-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-top: 1px solid rgba(28, 27, 26, 0.08);
+  border-bottom: 1px solid rgba(28, 27, 26, 0.08);
+  margin-bottom: 0.8rem;
+}
+.btn-lightbox-like {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 0.3rem 0.65rem;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.03);
+  transition: var(--transition-smooth);
+}
+.btn-lightbox-like:hover, .btn-lightbox-like.liked {
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.12);
+}
+.lightbox-comments-total {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.lightbox-comments-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 120px;
+}
+.comments-heading {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.comments-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-right: 0.3rem;
+  max-height: 160px;
+}
+@media (min-width: 768px) {
+  .comments-list {
+    max-height: 240px;
+  }
+}
+.comments-empty-state {
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.comment-item {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(28, 27, 26, 0.06);
+  border-radius: 4px;
+  padding: 0.5rem 0.7rem;
+}
+.comment-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+.comment-author-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.comment-author-name i {
+  color: var(--gold-primary);
+  font-size: 0.8rem;
+}
+.comment-time {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+.comment-item-body {
+  font-size: 0.78rem;
+  color: var(--text-main);
+  line-height: 1.35;
+}
+
+.lightbox-comment-form {
+  margin-top: 0.8rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(28, 27, 26, 0.08);
+}
+.comment-inputs-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.comment-inputs-row input[type="text"] {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.8rem;
+  border: 1px solid rgba(28, 27, 26, 0.18);
+  border-radius: var(--border-radius-card);
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--text-main);
+  font-family: inherit;
+}
+.comment-inputs-row input[type="text"]:focus {
+  outline: none;
+  border-color: var(--gold-primary);
+  background: #fff;
+}
+.comment-submit-wrap {
+  display: flex;
+  gap: 0.3rem;
+}
+.comment-submit-wrap input[type="text"] {
+  flex: 1;
+}
+.btn-send-comment {
+  background: var(--gold-gradient);
+  color: var(--bg-dark);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--border-radius-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: var(--transition-smooth);
+}
+.btn-send-comment:hover {
+  box-shadow: var(--shadow-gold);
 }
 
 /* ---------- 9. RSVP FORM ---------- */
