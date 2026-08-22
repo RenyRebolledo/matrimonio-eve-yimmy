@@ -1,6 +1,6 @@
 /**
- * EVELYN & YIMMY - THE WEDDING ISSUE
- * High-Fashion Editorial Photo Album (IndexedDB + Masonry Gallery + Lightbox)
+ * EVELYN & YIMMY - NUESTRO MATRIMONIO
+ * Álbum Colaborativo de Recuerdos (IndexedDB + Galería + Lightbox)
  */
 
 const DB_NAME = 'EveYimmyWeddingAlbum';
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initIndexedDB() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onupgradeneeded = (e) => {
@@ -36,7 +36,7 @@ function initIndexedDB() {
     };
 
     request.onerror = (e) => {
-      console.warn('IndexedDB error, falling back to memory array:', e);
+      console.warn('IndexedDB error, fallback to memory:', e);
       resolve(null);
     };
   });
@@ -47,46 +47,28 @@ const INITIAL_PHOTOS = [
     id: 1,
     url: 'assets/images/couple_portrait.jpg',
     author: 'Evelyn & Yimmy',
-    caption: 'Comenzando el viaje de nuestras vidas 💍',
-    category: 'ceremonia',
-    likes: 34,
+    caption: '¡Comenzando esta nueva etapa juntos! 💍',
+    category: 'invitados',
+    likes: 48,
     timestamp: Date.now() - 3600000 * 5
   },
   {
     id: 2,
     url: 'assets/images/venue_casapirque.jpg',
     author: 'Los Novios',
-    caption: 'El hermoso paisaje de Casa Pirque 🏔️✨',
+    caption: 'El hermoso entorno de Casa Pirque 🏔️✨',
     category: 'lugar',
-    likes: 27,
+    likes: 35,
     timestamp: Date.now() - 3600000 * 4
   },
   {
     id: 3,
     url: 'assets/images/picnic_lawn.jpg',
     author: 'Evelyn & Yimmy',
-    caption: 'Listos para el momento picnic y manta en el pasto 🧺🌿',
+    caption: 'Listos para el momento manta en el pasto 🧺🌿',
     category: 'lugar',
-    likes: 42,
+    likes: 52,
     timestamp: Date.now() - 3600000 * 3
-  },
-  {
-    id: 4,
-    url: 'assets/images/dresscode_women.jpg',
-    author: 'Inspiración',
-    caption: 'Lookbook damas: elegancia primaveral 🌸',
-    category: 'invitados',
-    likes: 21,
-    timestamp: Date.now() - 3600000 * 2
-  },
-  {
-    id: 5,
-    url: 'assets/images/dresscode_men.jpg',
-    author: 'Inspiración',
-    caption: 'Lookbook varones: tonos lino & contemporáneos 👔',
-    category: 'invitados',
-    likes: 25,
-    timestamp: Date.now() - 3600000
   }
 ];
 
@@ -126,11 +108,11 @@ function seedInitialPhotos() {
 }
 
 function renderGallery(photos) {
-  const grid = document.getElementById('gallery-grid') || document.getElementById('polaroid-grid');
+  const grid = document.getElementById('gallery-grid');
   if (!grid) return;
 
   if (photos.length === 0) {
-    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 2rem;">Aún no hay fotos en esta categoría. ¡Sé el primero en subir una!</p>';
+    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 2rem;">Aún no hay fotos en esta sección. ¡Sé el primero en subir una foto!</p>';
     return;
   }
 
@@ -144,7 +126,6 @@ function renderGallery(photos) {
     </div>
   `).join('');
 
-  // Attach Lightbox click
   grid.querySelectorAll('.gallery-item').forEach(item => {
     item.addEventListener('click', () => {
       openLightbox(
@@ -157,7 +138,6 @@ function renderGallery(photos) {
 }
 
 function initGalleryEvents() {
-  // Filters
   const filterBtns = document.querySelectorAll('.filter-btn');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -168,7 +148,6 @@ function initGalleryEvents() {
     });
   });
 
-  // Photo Upload
   const openUploadBtn = document.getElementById('btn-open-upload');
   const fileInput = document.getElementById('photo-file-input');
 
@@ -183,8 +162,8 @@ function initGalleryEvents() {
       reader.onload = (evt) => {
         const photoData = {
           url: evt.target.result,
-          author: 'Invitado Especial',
-          caption: 'Foto compartida con amor 💕',
+          author: 'Invitado(a) Especial',
+          caption: 'Foto compartida en la boda 💕',
           category: 'invitados',
           likes: 1,
           timestamp: Date.now()
@@ -207,7 +186,6 @@ function initGalleryEvents() {
     });
   }
 
-  // Lightbox close
   const lightbox = document.getElementById('lightbox-modal');
   const closeBtn = document.getElementById('lightbox-close');
   if (closeBtn && lightbox) {

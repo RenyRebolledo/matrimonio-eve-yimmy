@@ -1,6 +1,6 @@
 /**
- * EVELYN & YIMMY - THE WEDDING ISSUE
- * Core Application Logic (Countdown, Calendar, Audio Synthesizer, Navigation, Bank Modal)
+ * EVELYN & YIMMY - NUESTRO MATRIMONIO
+ * Core Application Logic (Countdown, Google Calendar, Audio Synthesizer, Navigation, Bank Modal)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initBankModal();
   initScrollReveals();
+  initChallengeUpload();
 });
 
 /* ==========================================================================
@@ -53,15 +54,17 @@ function initCountdown() {
 }
 
 /* ==========================================================================
-   2. CALENDAR INTEGRATION
+   2. GOOGLE CALENDAR INTEGRATION
    ========================================================================== */
 function initCalendarActions() {
-  const googleBtns = [document.getElementById('btn-google-cal'), document.getElementById('btn-calendar-add')];
-  const icsBtns = [document.getElementById('btn-download-ics')];
+  const googleBtns = [
+    document.getElementById('btn-google-cal'),
+    document.getElementById('btn-google-cal-hero')
+  ];
 
-  const title = encodeURIComponent("Matrimonio Evelyn López & Yimmy Salgado");
-  const details = encodeURIComponent("¡Acompáñanos a celebrar nuestro matrimonio en Casa Pirque! Dress Code: Campestre Elegante. Recuerda traer tu manta para el Momento Pasto 🧺.");
-  const location = encodeURIComponent("Casa Pirque, Región Metropolitana, Chile");
+  const title = encodeURIComponent("Matrimonio Evelyn López & Yimmy Salgado 💍");
+  const details = encodeURIComponent("¡Celebración del matrimonio de Evelyn y Yimmy en Casa Pirque! Dress Code: Campestre Elegante. Recuerda traer tu manta para instalarte en el césped 🧺🌿.");
+  const location = encodeURIComponent("Casa Pirque, Pirque, Región Metropolitana, Chile");
   const startIso = "20261121T140000Z";
   const endIso = "20261122T040000Z";
 
@@ -74,42 +77,6 @@ function initCalendarActions() {
       });
     }
   });
-
-  icsBtns.forEach(btn => {
-    if (btn) {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        downloadIcsFile();
-      });
-    }
-  });
-}
-
-function downloadIcsFile() {
-  const icsContent = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Evelyn & Yimmy//Boda Oficial//ES',
-    'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
-    'BEGIN:VEVENT',
-    'SUMMARY:Matrimonio Evelyn López & Yimmy Salgado',
-    'DESCRIPTION:Celebración de matrimonio en Casa Pirque. Código de Vestimenta: Campestre Elegante.',
-    'LOCATION:Casa Pirque, Región Metropolitana, Chile',
-    'DTSTART:20261121T140000Z',
-    'DTEND:20261122T040000Z',
-    'STATUS:CONFIRMED',
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ].join('\r\n');
-
-  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-  const link = document.createElement('a');
-  link.href = window.URL.createObjectURL(blob);
-  link.setAttribute('download', 'Matrimonio_Evelyn_Yimmy.ics');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 }
 
 /* ==========================================================================
@@ -220,7 +187,7 @@ function initBankModal() {
 
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
-      const textToCopy = `DATOS DE TRANSFERENCIA MATRIMONIO EVELYN & YIMMY\nTitular: Evelyn López & Yimmy Salgado\nRUT: 12.345.678-9\nBanco: Banco de Chile\nTipo de Cuenta: Cuenta Corriente\nN°: 00-123-45678-90\nEmail: boda.evelyn.yimmy@gmail.com`;
+      const textToCopy = `DATOS DE TRANSFERENCIA MATRIMONIO EVELYN & YIMMY\nTitulares: Evelyn López & Yimmy Salgado\nRUT: 12.345.678-9\nBanco: Banco de Chile\nTipo de Cuenta: Cuenta Corriente\nN°: 00-123-45678-90\nEmail: boda.evelyn.yimmy@gmail.com`;
       navigator.clipboard.writeText(textToCopy).then(() => {
         copyBtn.innerHTML = '<i class="ri-check-line"></i> ¡Datos Copiados!';
         setTimeout(() => {
@@ -232,7 +199,18 @@ function initBankModal() {
 }
 
 /* ==========================================================================
-   6. SCROLL REVEAL (IntersectionObserver)
+   6. PHOTO CHALLENGE UPLOAD BUTTON
+   ========================================================================== */
+function initChallengeUpload() {
+  const btn = document.getElementById('btn-challenge-upload');
+  const fileInput = document.getElementById('photo-file-input');
+  if (btn && fileInput) {
+    btn.addEventListener('click', () => fileInput.click());
+  }
+}
+
+/* ==========================================================================
+   7. SCROLL REVEAL (IntersectionObserver)
    ========================================================================== */
 function initScrollReveals() {
   const reveals = document.querySelectorAll('.reveal');
