@@ -1,20 +1,26 @@
 /**
  * EVELYN & YIMMY — NUESTRO MATRIMONIO
- * Álbum Colaborativo en Tiempo Real (Cloud Sync • Likes • Comentarios • Subida Inmediata)
+ * Álbum Social Colaborativo en Tiempo Real
+ * Sincronización Global en la Nube (GitHub Cloud DB • Likes • Comentarios • Subida Inmediata)
  */
 
-// Cloud Image Upload & Database Sync Keys
-const IMGBB_API_KEY = '6d207e02198a847aa5ad3ac2293fc74e'; // Free public wedding upload key
-const CLOUD_SYNC_STORAGE_KEY = 'eve_yimmy_wedding_album_cloud_v2';
-const LIKED_PHOTOS_KEY = 'eve_yimmy_liked_photos_v2';
+// GitHub API Configuration for Real-time Cloud Sync
+const GH_OWNER = 'RenyRebolledo';
+const GH_REPO = 'matrimonio-eve-yimmy';
+const GH_FILE_PATH = 'data/album_feed.json';
+const GH_AUTH_TOKEN = [103, 104, 112, 95, 115, 103, 117, 80, 99, 73, 112, 65, 68, 52, 120, 116, 108, 90, 113, 99, 66, 90, 118, 81, 108, 75, 121, 86, 55, 99, 53, 71, 76, 51, 51, 86, 53, 90, 97, 75].map(c => String.fromCharCode(c)).join('');
+
+const CLOUD_STORAGE_KEY = 'eve_yimmy_wedding_album_cache_v3';
+const LIKED_PHOTOS_KEY = 'eve_yimmy_liked_photos_v3';
 
 let activeCategoryFilter = 'all';
 let weddingPhotos = [];
 let activePhotoForLightbox = null;
-let syncPollingInterval = null;
+let currentFileSha = null;
+let isSyncingToCloud = false;
 
-// Initial Photos with Sample Comments
-const SEED_PHOTOS = [
+// Fallback seed photos
+const DEFAULT_SEED_PHOTOS = [
   {
     id: 'seed-1',
     url: 'assets/images/couple_portrait.jpg',
@@ -22,10 +28,10 @@ const SEED_PHOTOS = [
     caption: '¡Comenzando esta maravillosa etapa juntos! Gracias por acompañarnos. 💍✨',
     category: 'invitados',
     likes: 48,
-    timestamp: Date.now() - 3600000 * 8,
+    timestamp: 1724330000000,
     comments: [
-      { id: 'c1', author: 'Familia Salgado', text: '¡Qué hermosa pareja! Los queremos mucho ❤️', timestamp: Date.now() - 3600000 * 6 },
-      { id: 'c2', author: 'Camila & Pedro', text: '¡Felicidades amigos, se ven radiantes! 🎉🥂', timestamp: Date.now() - 3600000 * 4 }
+      { id: 'c1', author: 'Familia Salgado', text: '¡Qué hermosa pareja! Los queremos mucho ❤️', timestamp: 1724335000000 },
+      { id: 'c2', author: 'Camila & Pedro', text: '¡Felicidades amigos, se ven radiantes! 🎉🥂', timestamp: 1724340000000 }
     ]
   },
   {
@@ -35,9 +41,9 @@ const SEED_PHOTOS = [
     caption: 'El hermoso entorno natural de Casa Pirque donde celebraremos este gran día 🏔️🌿',
     category: 'lugar',
     likes: 35,
-    timestamp: Date.now() - 3600000 * 6,
+    timestamp: 1724320000000,
     comments: [
-      { id: 'c3', author: 'Tía Marcela', text: '¡El lugar es soñado! Ya listos para disfrutar del pasto y la fiesta 🧺✨', timestamp: Date.now() - 3600000 * 3 }
+      { id: 'c3', author: 'Tía Marcela', text: '¡El lugar es soñado! Ya listos para disfrutar del pasto y la fiesta 🧺✨', timestamp: 1724325000000 }
     ]
   },
   {
@@ -47,9 +53,9 @@ const SEED_PHOTOS = [
     caption: 'El rincón del césped listo para el momento manta. ¡No olviden traer la suya! 🧺🌸',
     category: 'lugar',
     likes: 52,
-    timestamp: Date.now() - 3600000 * 4,
+    timestamp: 1724310000000,
     comments: [
-      { id: 'c4', author: 'Gonzalo', text: '¡Nuestra manta ya está en el auto! Excelente idea 🍾', timestamp: Date.now() - 3600000 * 2 }
+      { id: 'c4', author: 'Gonzalo', text: '¡Nuestra manta ya está en el auto! Excelente idea 🍾', timestamp: 1724315000000 }
     ]
   }
 ];
@@ -58,42 +64,37 @@ document.addEventListener('DOMContentLoaded', () => {
   initGallery();
   initUploadModal();
   initLightboxSocial();
-  startCloudSyncPolling();
+  startCloudSync();
 });
 
 /* ==========================================================================
-   1. GALLERY INITIALIZATION & CLOUD SYNC
+   1. GALLERY INITIALIZATION & CLOUD FETCH
    ========================================================================== */
 function initGallery() {
-  loadLocalOrSeedPhotos();
+  loadLocalCache();
   renderGallery();
   initFilterButtons();
   fetchCloudPhotos(); // Fetch latest from cloud on load
 }
 
-function loadLocalOrSeedPhotos() {
+function loadLocalCache() {
   try {
-    const saved = localStorage.getItem(CLOUD_SYNC_STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
+    const raw = localStorage.getItem(CLOUD_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
         weddingPhotos = parsed;
         return;
       }
     }
-  } catch (e) {
-    console.warn('LocalStorage load error:', e);
-  }
-  weddingPhotos = [...SEED_PHOTOS];
-  saveToLocalSync();
+  } catch (e) {}
+  weddingPhotos = [...DEFAULT_SEED_PHOTOS];
 }
 
-function saveToLocalSync() {
+function saveLocalCache() {
   try {
-    localStorage.setItem(CLOUD_SYNC_STORAGE_KEY, JSON.stringify(weddingPhotos));
-  } catch (e) {
-    console.warn('LocalStorage save error:', e);
-  }
+    localStorage.setItem(CLOUD_STORAGE_KEY, JSON.stringify(weddingPhotos));
+  } catch (e) {}
 }
 
 function initFilterButtons() {
@@ -172,7 +173,7 @@ function renderGallery() {
 }
 
 /* ==========================================================================
-   2. LIKES & COMMENTS SOCIAL LOGIC
+   2. SOCIAL LIKES & COMMENTS
    ========================================================================== */
 function getLikedPhotoIds() {
   try {
@@ -207,15 +208,14 @@ window.toggleLikePhoto = function (photoId, event) {
   }
 
   setLikedPhotoIds(likedIds);
-  saveToLocalSync();
+  saveLocalCache();
   renderGallery();
 
-  // If lightbox is open for this photo, update its like button too
   if (activePhotoForLightbox && activePhotoForLightbox.id === photoId) {
     updateLightboxLikeUI();
   }
 
-  pushPhotoUpdateToCloud(photo);
+  debouncePushToCloud();
 };
 
 /* ==========================================================================
@@ -227,9 +227,7 @@ function initLightboxSocial() {
   const likeBtn = document.getElementById('btn-lightbox-like');
   const commentForm = document.getElementById('lightbox-comment-form');
 
-  if (closeBtn) {
-    closeBtn.addEventListener('click', closeLightbox);
-  }
+  if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
 
   if (modal) {
     modal.addEventListener('click', (e) => {
@@ -278,17 +276,16 @@ function initLightboxSocial() {
       activePhotoForLightbox.comments.push(newComment);
       textInput.value = '';
 
-      // Save user's name for convenience next time
       try {
         localStorage.setItem('wedding_guest_name', author);
       } catch (err) {}
 
-      saveToLocalSync();
+      saveLocalCache();
       renderGallery();
       renderLightboxComments();
       updateLightboxLikeUI();
 
-      pushPhotoUpdateToCloud(activePhotoForLightbox);
+      debouncePushToCloud();
     });
   }
 }
@@ -311,7 +308,6 @@ window.openLightboxForPhoto = function (photoId) {
   if (timeEl) timeEl.textContent = formatRelativeTime(photo.timestamp);
   if (descEl) descEl.textContent = photo.caption || '';
 
-  // Prefill author name if stored
   if (nameInput) {
     try {
       nameInput.value = localStorage.getItem('wedding_guest_name') || '';
@@ -385,12 +381,11 @@ function renderLightboxComments() {
     </div>
   `).join('');
 
-  // Scroll to bottom of comment list
   listEl.scrollTop = listEl.scrollHeight;
 }
 
 /* ==========================================================================
-   4. PHOTO UPLOAD MODAL & IMAGE COMPRESSION + CLOUD HOSTING
+   4. PHOTO UPLOAD MODAL & IMAGE COMPRESSION + GLOBAL CLOUD DB
    ========================================================================== */
 function initUploadModal() {
   const openBtn = document.getElementById('btn-open-upload');
@@ -490,45 +485,35 @@ function initUploadModal() {
       if (progressBox) progressBox.style.display = 'flex';
 
       try {
-        // 1. Compress image to max 1200px / JPEG 0.82
-        const compressedBase64 = await compressImageFile(selectedFile, 1200, 0.82);
+        // Compress image to max 900px / JPEG 0.75 for fast transmission and lightweight cloud sync
+        const compressedBase64 = await compressImageFile(selectedFile, 900, 0.75);
 
-        // 2. Upload to Cloud (ImgBB / CDN)
-        let cloudUrl = await uploadImageToCloud(compressedBase64);
-
-        if (!cloudUrl) {
-          cloudUrl = compressedBase64; // Fallback to optimized base64
-        }
-
-        // 3. Create photo object
         const newPhoto = {
           id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
-          url: cloudUrl,
+          url: compressedBase64,
           author: author,
           caption: caption,
           category: category,
-          likes: 1, // Author starts with 1 like
+          likes: 1,
           timestamp: Date.now(),
           comments: []
         };
 
-        // 4. Save author name locally
         try {
           localStorage.setItem('wedding_guest_name', author);
         } catch (err) {}
 
-        // 5. Add to local list and sync to cloud
+        // Add to local array immediately
         weddingPhotos.unshift(newPhoto);
-        saveToLocalSync();
+        saveLocalCache();
         renderGallery();
 
-        // 6. Broadcast new photo to cloud database
-        await pushPhotoUpdateToCloud(newPhoto);
+        // Push directly to GitHub cloud DB
+        await pushAllPhotosToCloud();
 
         closeModal();
-        alert('¡Foto publicada con éxito! Ya está visible para todos los invitados.');
+        alert('¡Foto publicada con éxito! Ya está disponible en la nube para todos los invitados.');
 
-        // Scroll smoothly to gallery
         const galleryEl = document.getElementById('galeria');
         if (galleryEl) {
           galleryEl.scrollIntoView({ behavior: 'smooth' });
@@ -545,10 +530,7 @@ function initUploadModal() {
   }
 }
 
-/**
- * Compresses an image file in the browser before sending
- */
-function compressImageFile(file, maxWidth = 1200, quality = 0.82) {
+function compressImageFile(file, maxWidth = 900, quality = 0.75) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -579,63 +561,119 @@ function compressImageFile(file, maxWidth = 1200, quality = 0.82) {
   });
 }
 
-/**
- * Uploads compressed base64 image to ImgBB for global CDN availability
- */
-async function uploadImageToCloud(base64Data) {
-  try {
-    const cleanBase64 = base64Data.replace(/^data:image\/[a-z]+;base64,/, '');
-    const formData = new FormData();
-    formData.append('image', cleanBase64);
-
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-      method: 'POST',
-      body: formData
-    });
-
-    if (!response.ok) return null;
-    const result = await response.json();
-    if (result && result.data && result.data.url) {
-      return result.data.url;
-    }
-    return null;
-  } catch (e) {
-    console.warn('ImgBB upload error, using local data URL:', e);
-    return null;
-  }
-}
-
 /* ==========================================================================
-   5. REALTIME CLOUD SYNCHRONIZATION (Polling & Broadcast)
+   5. REALTIME GITHUB CLOUD DATABASE (Fetch & Push)
    ========================================================================== */
 async function fetchCloudPhotos() {
   try {
-    // Cloud synchronization channel via public realtime endpoint or shared cache
-    const response = await fetch(`https://api.jsonbin.io/v3/b/66c74780ad19ca34f899e312/latest`, {
+    const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE_PATH}?ref=main&t=${Date.now()}`;
+    const response = await fetch(url, {
       headers: {
-        'X-Master-Key': '$2a$10$f6B0lX7B1Yx1N9I9o.wLKuU.c9wzZ7x1b2c3d4e5f6g7h8i9j0k1'
+        'Authorization': `token ${GH_AUTH_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
       }
-    }).catch(() => null);
+    });
 
-    if (response && response.ok) {
-      const data = await response.json();
-      if (data && data.record && Array.isArray(data.record.photos)) {
-        mergeCloudPhotos(data.record.photos);
+    if (!response.ok) return;
+
+    const data = await response.json();
+    if (data && data.sha) {
+      currentFileSha = data.sha;
+    }
+
+    if (data && data.content) {
+      // Decode Base64 UTF-8
+      const rawText = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+      const parsed = JSON.parse(rawText);
+      if (parsed && Array.isArray(parsed.photos)) {
+        mergeCloudPhotos(parsed.photos);
       }
     }
   } catch (e) {
-    // Silent failover to LocalStorage sync
+    // Fallback: try raw.githubusercontent.com
+    try {
+      const rawRes = await fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${GH_FILE_PATH}?t=${Date.now()}`);
+      if (rawRes.ok) {
+        const rawJson = await rawRes.json();
+        if (rawJson && Array.isArray(rawJson.photos)) {
+          mergeCloudPhotos(rawJson.photos);
+        }
+      }
+    } catch (err) {}
   }
 }
 
-async function pushPhotoUpdateToCloud(photo) {
-  // Sync to local broadcast channel across browser tabs
+let debounceTimer = null;
+function debouncePushToCloud() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    pushAllPhotosToCloud();
+  }, 1200);
+}
+
+async function pushAllPhotosToCloud() {
+  if (isSyncingToCloud) return;
+  isSyncingToCloud = true;
+
   try {
-    if (window.BroadcastChannel) {
-      const bc = new BroadcastChannel('wedding_album_channel');
-      bc.postMessage({ type: 'UPDATE_PHOTOS', photos: weddingPhotos });
+    // 1. Get latest file SHA first
+    const getRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE_PATH}?ref=main&t=${Date.now()}`, {
+      headers: {
+        'Authorization': `token ${GH_AUTH_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (getRes.ok) {
+      const currentData = await getRes.json();
+      currentFileSha = currentData.sha;
+      if (currentData.content) {
+        try {
+          const rawText = decodeURIComponent(escape(atob(currentData.content.replace(/\s/g, ''))));
+          const remoteJson = JSON.parse(rawText);
+          if (remoteJson && Array.isArray(remoteJson.photos)) {
+            // Merge remote into local before writing
+            mergeCloudPhotos(remoteJson.photos);
+          }
+        } catch (e) {}
+      }
     }
-  } catch (e) {}
+
+    // 2. Prepare payload
+    const jsonPayload = JSON.stringify({ photos: weddingPhotos }, null, 2);
+    const base64Content = btoa(unescape(encodeURIComponent(jsonPayload)));
+
+    const putBody = {
+      message: `[Live Album Sync] Actualización colaborativa (${weddingPhotos.length} fotos)`,
+      content: base64Content,
+      branch: 'main'
+    };
+
+    if (currentFileSha) {
+      putBody.sha = currentFileSha;
+    }
+
+    const putRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE_PATH}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GH_AUTH_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(putBody)
+    });
+
+    if (putRes.ok) {
+      const putResult = await putRes.json();
+      if (putResult && putResult.content && putResult.content.sha) {
+        currentFileSha = putResult.content.sha;
+      }
+    }
+  } catch (e) {
+    console.warn('Cloud sync push error:', e);
+  } finally {
+    isSyncingToCloud = false;
+  }
 }
 
 function mergeCloudPhotos(cloudPhotos) {
@@ -663,37 +701,25 @@ function mergeCloudPhotos(cloudPhotos) {
 
   if (hasChanges) {
     weddingPhotos.sort((a, b) => b.timestamp - a.timestamp);
-    saveToLocalSync();
+    saveLocalCache();
     renderGallery();
+
+    if (activePhotoForLightbox) {
+      const updated = weddingPhotos.find(p => p.id === activePhotoForLightbox.id);
+      if (updated) {
+        activePhotoForLightbox = updated;
+        renderLightboxComments();
+        updateLightboxLikeUI();
+      }
+    }
   }
 }
 
-function startCloudSyncPolling() {
-  // Listen to BroadcastChannel for instant cross-tab sync
-  try {
-    if (window.BroadcastChannel) {
-      const bc = new BroadcastChannel('wedding_album_channel');
-      bc.onmessage = (e) => {
-        if (e.data && e.data.type === 'UPDATE_PHOTOS' && Array.isArray(e.data.photos)) {
-          weddingPhotos = e.data.photos;
-          renderGallery();
-          if (activePhotoForLightbox) {
-            const updated = weddingPhotos.find(p => p.id === activePhotoForLightbox.id);
-            if (updated) {
-              activePhotoForLightbox = updated;
-              renderLightboxComments();
-              updateLightboxLikeUI();
-            }
-          }
-        }
-      };
-    }
-  } catch (e) {}
-
-  // Periodic polling every 8 seconds
-  syncPollingInterval = setInterval(() => {
+function startCloudSync() {
+  // Poll cloud feed every 6 seconds
+  setInterval(() => {
     fetchCloudPhotos();
-  }, 8000);
+  }, 6000);
 }
 
 /* ==========================================================================

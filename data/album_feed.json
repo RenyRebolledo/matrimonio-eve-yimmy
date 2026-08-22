@@ -1,1 +1,61 @@
-{"photos":[]}
+{
+  "photos": [
+    {
+      "id": "seed-1",
+      "url": "assets/images/couple_portrait.jpg",
+      "author": "Evelyn & Yimmy",
+      "caption": "¡Comenzando esta maravillosa etapa juntos! Gracias por acompañarnos. 💍✨",
+      "category": "invitados",
+      "likes": 48,
+      "timestamp": 1724330000000,
+      "comments": [
+        {
+          "id": "c1",
+          "author": "Familia Salgado",
+          "text": "¡Qué hermosa pareja! Los queremos mucho ❤️",
+          "timestamp": 1724335000000
+        },
+        {
+          "id": "c2",
+          "author": "Camila & Pedro",
+          "text": "¡Felicidades amigos, se ven radiantes! 🎉🥂",
+          "timestamp": 1724340000000
+        }
+      ]
+    },
+    {
+      "id": "seed-2",
+      "url": "assets/images/venue_casapirque.jpg",
+      "author": "Los Novios",
+      "caption": "El hermoso entorno natural de Casa Pirque donde celebraremos este gran día 🏔️🌿",
+      "category": "lugar",
+      "likes": 35,
+      "timestamp": 1724320000000,
+      "comments": [
+        {
+          "id": "c3",
+          "author": "Tía Marcela",
+          "text": "¡El lugar es soñado! Ya listos para disfrutar del pasto y la fiesta 🧺✨",
+          "timestamp": 1724325000000
+        }
+      ]
+    },
+    {
+      "id": "seed-3",
+      "url": "assets/images/picnic_lawn.jpg",
+      "author": "Evelyn & Yimmy",
+      "caption": "El rincón del césped listo para el momento manta. ¡No olviden traer la suya! 🧺🌸",
+      "category": "lugar",
+      "likes": 52,
+      "timestamp": 1724310000000,
+      "comments": [
+        {
+          "id": "c4",
+          "author": "Gonzalo",
+          "text": "¡Nuestra manta ya está en el auto! Excelente idea 🍾",
+          "timestamp": 1724315000000
+        }
+      ]
+    }
+  ]
+}
