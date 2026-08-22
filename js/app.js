@@ -5,6 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initThemeSwitcher();
+  initAtmosphereParticles();
   initCountdown();
   initCalendarActions();
   initAudioPlayer();
@@ -17,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ==========================================================================
    0. THEME SWITCHER (🖤 Vogue • 🌿 Campestre • ✨ Clásico • 🌸 Florido)
    ========================================================================== */
+let activeAtmosphereTheme = 'theme-vogue';
+
 function initThemeSwitcher() {
   const themeBtns = document.querySelectorAll('.style-btn');
   const validThemes = ['theme-vogue', 'theme-campestre', 'theme-tradicional', 'theme-florido'];
@@ -26,6 +29,7 @@ function initThemeSwitcher() {
 
     validThemes.forEach(t => document.body.classList.remove(t));
     document.body.classList.add(themeName);
+    activeAtmosphereTheme = themeName;
 
     themeBtns.forEach(btn => {
       if (btn.getAttribute('data-theme') === themeName) {
@@ -34,6 +38,10 @@ function initThemeSwitcher() {
         btn.classList.remove('active');
       }
     });
+
+    if (window.resetAtmosphereParticles) {
+      window.resetAtmosphereParticles(themeName);
+    }
 
     try {
       localStorage.setItem('wedding_style_theme_v2', themeName);
@@ -57,6 +65,146 @@ function initThemeSwitcher() {
       applyTheme(selected);
     });
   });
+}
+
+/* ==========================================================================
+   0.1 ATMOSPHERIC PARTICLES ENGINE (Petals, Leaves, Gold Sparkles, Bokeh)
+   ========================================================================== */
+function initAtmosphereParticles() {
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  const particleCount = window.innerWidth < 600 ? 18 : 32;
+  let particles = [];
+
+  class Particle {
+    constructor(theme) {
+      this.reset(theme, true);
+    }
+
+    reset(theme, initial = false) {
+      this.theme = theme || activeAtmosphereTheme;
+      this.x = Math.random() * width;
+      this.y = initial ? Math.random() * height : -20;
+      this.size = Math.random() * 8 + 6;
+      this.speedY = Math.random() * 1.2 + 0.6;
+      this.speedX = Math.sin(Math.random() * Math.PI) * 0.8 - 0.4;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotSpeed = (Math.random() - 0.5) * 0.03;
+      this.opacity = Math.random() * 0.5 + 0.35;
+      this.flip = Math.random() * Math.PI;
+      this.flipSpeed = Math.random() * 0.03 + 0.01;
+
+      // Type-specific tweaks
+      if (this.theme === 'theme-tradicional') {
+        this.y = initial ? Math.random() * height : height + 10;
+        this.speedY = -(Math.random() * 0.8 + 0.4); // Sparkles rise up
+        this.size = Math.random() * 3 + 2;
+      } else if (this.theme === 'theme-vogue') {
+        this.y = initial ? Math.random() * height : height + 20;
+        this.speedY = -(Math.random() * 0.5 + 0.3); // Bokeh rises
+        this.size = Math.random() * 12 + 6;
+        this.opacity = Math.random() * 0.15 + 0.05;
+      }
+    }
+
+    update() {
+      this.y += this.speedY;
+      this.x += this.speedX + Math.sin(this.flip) * 0.5;
+      this.rotation += this.rotSpeed;
+      this.flip += this.flipSpeed;
+
+      // Wrap-around bounds
+      if (this.theme === 'theme-tradicional' || this.theme === 'theme-vogue') {
+        if (this.y < -30) this.reset(this.theme, false);
+      } else {
+        if (this.y > height + 30) this.reset(this.theme, false);
+      }
+
+      if (this.x < -30) this.x = width + 20;
+      if (this.x > width + 30) this.x = -20;
+    }
+
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.scale(Math.cos(this.flip), 1);
+      ctx.globalAlpha = this.opacity;
+
+      if (this.theme === 'theme-florido') {
+        // Soft pink rose petal
+        ctx.fillStyle = '#F7BAC4';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(-this.size, -this.size * 0.6, -this.size * 0.6, -this.size * 1.5, 0, -this.size * 1.8);
+        ctx.bezierCurveTo(this.size * 0.6, -this.size * 1.5, this.size, -this.size * 0.6, 0, 0);
+        ctx.fill();
+        ctx.fillStyle = '#D47B8B';
+        ctx.globalAlpha = this.opacity * 0.4;
+        ctx.fill();
+      } else if (this.theme === 'theme-campestre') {
+        // Green Eucalyptus/Olive leaf
+        ctx.fillStyle = '#8BAE88';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, this.size * 0.45, this.size * 1.1, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#527A50';
+        ctx.globalAlpha = this.opacity * 0.6;
+        ctx.fill();
+      } else if (this.theme === 'theme-tradicional') {
+        // Golden royal star sparkle
+        ctx.fillStyle = '#D4AF37';
+        ctx.shadowColor = '#F5E6B3';
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Vogue luxury bokeh
+        ctx.fillStyle = '#C5A059';
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+  }
+
+  function setupParticles(theme) {
+    particles = [];
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle(theme));
+    }
+  }
+
+  window.resetAtmosphereParticles = function (theme) {
+    setupParticles(theme);
+  };
+
+  setupParticles(activeAtmosphereTheme);
+
+  function loop() {
+    ctx.clearRect(0, 0, width, height);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(loop);
+  }
+
+  loop();
 }
 
 /* ==========================================================================
