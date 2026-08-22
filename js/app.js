@@ -4,6 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initThemeSwitcher();
   initCountdown();
   initCalendarActions();
   initAudioPlayer();
@@ -12,6 +13,51 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveals();
   initChallengeUpload();
 });
+
+/* ==========================================================================
+   0. THEME SWITCHER (Campestre • Clásico • Florido)
+   ========================================================================== */
+function initThemeSwitcher() {
+  const themeBtns = document.querySelectorAll('.style-btn');
+  const validThemes = ['theme-campestre', 'theme-clasico', 'theme-florido'];
+
+  function applyTheme(themeName) {
+    if (!validThemes.includes(themeName)) themeName = 'theme-clasico';
+
+    validThemes.forEach(t => document.body.classList.remove(t));
+    document.body.classList.add(themeName);
+
+    themeBtns.forEach(btn => {
+      if (btn.getAttribute('data-theme') === themeName) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    try {
+      localStorage.setItem('wedding_style_theme', themeName);
+    } catch (e) {
+      console.warn('LocalStorage theme error:', e);
+    }
+  }
+
+  // Load saved theme or default to clasico
+  let savedTheme = 'theme-clasico';
+  try {
+    savedTheme = localStorage.getItem('wedding_style_theme') || 'theme-clasico';
+  } catch (e) {}
+
+  applyTheme(savedTheme);
+
+  // Attach click events
+  themeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const selected = btn.getAttribute('data-theme');
+      applyTheme(selected);
+    });
+  });
+}
 
 /* ==========================================================================
    1. COUNTDOWN TIMER (November 21, 2026 at 11:00 AM Santiago)
