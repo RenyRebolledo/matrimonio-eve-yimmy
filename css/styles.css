@@ -162,24 +162,24 @@ body.theme-tradicional .rsvp-editorial-wrapper {
 }
 
 /* --------------------------------------------------------------------------
-   THEME 4: FLORIDO ROMÁNTICO (Acuarela Rosa Pastel & Pétalos)
+   THEME 4: FLORIDO ROMÁNTICO (Hortensias Azul Empolvado, Lavanda & Flores Silvestres)
    -------------------------------------------------------------------------- */
 body.theme-florido {
-  --bg-main: #FCF1F3;              /* Petal Blush Cream */
+  --bg-main: #F2F6FA;              /* Soft Porcelain & Floral Mist */
   --bg-surface: #FFFFFF;
-  --bg-dark: #381721;              /* Velvet Wine Plum */
-  --bg-dark-surface: #290D15;
-  --text-main: #2B151E;            /* Deep Wine Plum */
-  --text-muted: #784C59;           /* Muted Dusty Rose */
-  --text-light: #FDF5F6;
-  --text-light-muted: #C4A7AE;
-  --gold-primary: #D47B8B;         /* Dusty Rose Bloom */
-  --gold-light: #F7BAC4;
-  --gold-dark: #A8495A;
-  --gold-gradient: linear-gradient(135deg, #D47B8B 0%, #F5B8C2 50%, #A8495A 100%);
-  --glow-color-1: rgba(212, 123, 139, 0.18);
-  --glow-color-2: rgba(247, 186, 196, 0.14);
-  --border-gold: 2px solid rgba(212, 123, 139, 0.55);
+  --bg-dark: #182838;              /* Deep Sapphire Botanical */
+  --bg-dark-surface: #101D2A;
+  --text-main: #142434;            /* Dark Floral Indigo */
+  --text-muted: #4F6B84;           /* Dusty Blue Muted */
+  --text-light: #F2F7FB;
+  --text-light-muted: #9BB8D0;
+  --gold-primary: #5587A8;         /* Dusty Blue Hydrangea Bloom */
+  --gold-light: #96C1DE;
+  --gold-dark: #376380;
+  --gold-gradient: linear-gradient(135deg, #5587A8 0%, #96C1DE 50%, #376380 100%);
+  --glow-color-1: rgba(85, 135, 168, 0.18);
+  --glow-color-2: rgba(150, 193, 222, 0.14);
+  --border-gold: 2px solid rgba(85, 135, 168, 0.55);
   --border-radius-card: 20px;
   --font-serif: 'Playfair Display', serif;
   --font-script: 'Pinyon Script', cursive;
@@ -187,16 +187,16 @@ body.theme-florido {
 body.theme-florido .hero-title .title-name {
   font-family: 'Pinyon Script', cursive;
   font-size: 1.5em;
-  color: #381721;
+  color: #182838;
   font-weight: normal;
   line-height: 0.85;
 }
 body.theme-florido .hero-border-frame {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 2px solid #F7BAC4;
-  box-shadow: 0 16px 45px rgba(212, 123, 139, 0.18);
+  border: 2px solid #96C1DE;
+  box-shadow: 0 16px 45px rgba(85, 135, 168, 0.18);
   border-radius: 24px;
 }
 body.theme-florido .editorial-card,
@@ -205,7 +205,7 @@ body.theme-florido .lookbook-card,
 body.theme-florido .challenge-card,
 body.theme-florido .rsvp-editorial-wrapper {
   border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(212, 123, 139, 0.1);
+  box-shadow: 0 10px 30px rgba(85, 135, 168, 0.1);
 }
 
 /* ---------- 2. RESET & BASE STYLES ---------- */
@@ -717,13 +717,13 @@ body.theme-tradicional .hero-theme-crest {
   background-size: contain;
 }
 
-/* FLORIDO: Watercolor Floral Corner Bouquets */
+/* FLORIDO: Watercolor Wildflower & Blue Hydrangea Corner Bouquets */
 body.theme-florido .frame-ornament {
   width: 90px;
   height: 90px;
   top: -10px;
   left: -10px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Ccircle cx='30' cy='30' r='20' fill='%23F7BAC4' opacity='0.9'/%3E%3Ccircle cx='28' cy='28' r='14' fill='%23D47B8B' opacity='0.95'/%3E%3Ccircle cx='48' cy='24' r='13' fill='%23FCE0E5' opacity='0.95'/%3E%3Ccircle cx='22' cy='52' r='12' fill='%23F5AAB7' opacity='0.9'/%3E%3Cpath d='M42 42 C 55 55, 75 50, 85 70 C 65 75, 50 65, 42 42 Z' fill='%238BAE88' opacity='0.85'/%3E%3Cpath d='M25 25 C 27 20, 33 20, 35 25 C 33 30, 27 30, 25 25 Z' fill='%23FFFFFF' opacity='0.7'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Ccircle cx='30' cy='30' r='20' fill='%2396C1DE' opacity='0.9'/%3E%3Ccircle cx='28' cy='28' r='14' fill='%235587A8' opacity='0.95'/%3E%3Ccircle cx='48' cy='24' r='13' fill='%23E1EEF6' opacity='0.95'/%3E%3Ccircle cx='22' cy='52' r='12' fill='%23B2D5EB' opacity='0.9'/%3E%3Cpath d='M42 42 C 55 55, 75 50, 85 70 C 65 75, 50 65, 42 42 Z' fill='%237DA687' opacity='0.85'/%3E%3Cpath d='M25 25 C 27 20, 33 20, 35 25 C 33 30, 27 30, 25 25 Z' fill='%23FFFFFF' opacity='0.8'/%3E%3C/svg%3E");
 }
 body.theme-florido .corner-tr { top: -10px; right: -10px; }
 body.theme-florido .corner-bl { bottom: -10px; left: -10px; }
@@ -734,7 +734,7 @@ body.theme-florido .hero-theme-crest {
   width: 52px;
   height: 30px;
   margin: 0 auto 0.6rem;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30' fill='%23D47B8B'%3E%3Ccircle cx='30' cy='15' r='9' fill='%23D47B8B'/%3E%3Ccircle cx='18' cy='15' r='7' fill='%23F7BAC4'/%3E%3Ccircle cx='42' cy='15' r='7' fill='%23F7BAC4'/%3E%3Cpath d='M8 15 Q 14 9 17 15 Q 14 21 8 15 Z M52 15 Q 46 9 43 15 Q 46 21 52 15 Z' fill='%238BAE88'/%3E%3C/svg%3E") no-repeat center;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30' fill='%235587A8'%3E%3Ccircle cx='30' cy='15' r='9' fill='%235587A8'/%3E%3Ccircle cx='18' cy='15' r='7' fill='%2396C1DE'/%3E%3Ccircle cx='42' cy='15' r='7' fill='%2396C1DE'/%3E%3Cpath d='M8 15 Q 14 9 17 15 Q 14 21 8 15 Z M52 15 Q 46 9 43 15 Q 46 21 52 15 Z' fill='%237DA687'/%3E%3C/svg%3E") no-repeat center;
   background-size: contain;
 }
 
@@ -1002,7 +1002,7 @@ body.theme-tradicional .title-divider {
 body.theme-florido .title-divider {
   width: 75px;
   height: 16px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' fill='%23D47B8B'%3E%3Ccircle cx='50' cy='10' r='4'/%3E%3Ccircle cx='42' cy='10' r='3' fill='%23F7BAC4'/%3E%3Ccircle cx='58' cy='10' r='3' fill='%23F7BAC4'/%3E%3Cpath d='M25 10 Q 35 5 40 10 Q 35 15 25 10 Z M75 10 Q 65 5 60 10 Q 65 15 75 10 Z' fill='%238BAE88'/%3E%3C/svg%3E") no-repeat center;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' fill='%235587A8'%3E%3Ccircle cx='50' cy='10' r='4'/%3E%3Ccircle cx='42' cy='10' r='3' fill='%2396C1DE'/%3E%3Ccircle cx='58' cy='10' r='3' fill='%2396C1DE'/%3E%3Cpath d='M25 10 Q 35 5 40 10 Q 35 15 25 10 Z M75 10 Q 65 5 60 10 Q 65 15 75 10 Z' fill='%237DA687'/%3E%3C/svg%3E") no-repeat center;
   background-size: contain;
 }
 

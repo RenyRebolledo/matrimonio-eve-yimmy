@@ -143,15 +143,15 @@ function initAtmosphereParticles() {
       ctx.globalAlpha = this.opacity;
 
       if (this.theme === 'theme-florido') {
-        // Soft pink rose petal
-        ctx.fillStyle = '#F7BAC4';
+        // Soft dusty blue & white floral petal
+        ctx.fillStyle = '#96C1DE';
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.bezierCurveTo(-this.size, -this.size * 0.6, -this.size * 0.6, -this.size * 1.5, 0, -this.size * 1.8);
         ctx.bezierCurveTo(this.size * 0.6, -this.size * 1.5, this.size, -this.size * 0.6, 0, 0);
         ctx.fill();
-        ctx.fillStyle = '#D47B8B';
-        ctx.globalAlpha = this.opacity * 0.4;
+        ctx.fillStyle = '#E8F2F8';
+        ctx.globalAlpha = this.opacity * 0.7;
         ctx.fill();
       } else if (this.theme === 'theme-campestre') {
         // Green Eucalyptus/Olive leaf
