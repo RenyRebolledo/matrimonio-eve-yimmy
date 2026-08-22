@@ -8,7 +8,14 @@
       "category": "invitados",
       "likes": 2,
       "timestamp": 1787419172823,
-      "comments": []
+      "comments": [
+        {
+          "id": "c_1787436650979_5wwub",
+          "author": "Eve",
+          "text": "🥰🥰🥰",
+          "timestamp": 1787436650979
+        }
+      ]
     },
     {
       "id": "seed-1",
