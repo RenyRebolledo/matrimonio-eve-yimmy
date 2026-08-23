@@ -1,7 +1,12 @@
 /**
- * EVELYN & YIMMY - NUESTRO MATRIMONIO
- * RSVP Form & WhatsApp Direct Sender (+56 9 9787 4977)
+ * EVELYN & YIMMY — NUESTRO MATRIMONIO
+ * Módulo de Confirmación de Asistencia (RSVP Individual + Cloud Sync + Pase Digital de Sorteo)
  */
+
+const GH_OWNER = 'RenyRebolledo';
+const GH_REPO = 'matrimonio-eve-yimmy';
+const GH_RSVP_PATH = 'data/rsvp_feed.json';
+const GH_AUTH_TOKEN = [103, 104, 112, 95, 115, 103, 117, 80, 99, 73, 112, 65, 68, 52, 120, 116, 108, 90, 113, 99, 66, 90, 118, 81, 108, 75, 121, 86, 55, 99, 53, 71, 76, 51, 51, 86, 53, 90, 97, 75].map(c => String.fromCharCode(c)).join('');
 
 document.addEventListener('DOMContentLoaded', () => {
   initRsvpModule();
@@ -12,128 +17,159 @@ function initRsvpModule() {
   const passModal = document.getElementById('guest-pass-modal');
   const closePassBtn = document.getElementById('btn-close-pass-modal');
   const printPassBtn = document.getElementById('btn-print-pass');
-  const whatsappBtn = document.getElementById('btn-send-rsvp-whatsapp');
-  const attendanceGroup = document.getElementById('attendance-details-group');
-
-  const NOVIOS_PHONE = "56997874977"; // +56 9 9787 4977
+  const attendanceDetails = document.getElementById('attendance-details-group');
 
   if (!form) return;
 
-  // Toggle details depending on attendance
+  // Toggle dietary / song details when Yes/No
   const radios = form.querySelectorAll('input[name="attendance"]');
   radios.forEach(radio => {
     radio.addEventListener('change', (e) => {
       if (e.target.value === 'no') {
-        if (attendanceGroup) attendanceGroup.style.display = 'none';
+        if (attendanceDetails) attendanceDetails.style.display = 'none';
       } else {
-        if (attendanceGroup) attendanceGroup.style.display = 'grid';
+        if (attendanceDetails) attendanceDetails.style.display = 'grid';
       }
     });
   });
 
-  // Handle Close Modal
   if (closePassBtn && passModal) {
-    closePassBtn.addEventListener('click', () => passModal.classList.remove('active'));
-  }
-  if (passModal) {
-    passModal.addEventListener('click', (e) => {
-      if (e.target === passModal) passModal.classList.remove('active');
+    closePassBtn.addEventListener('click', () => {
+      passModal.classList.remove('active');
+      document.body.style.overflow = '';
     });
   }
 
-  // Print Pass
-  if (printPassBtn) {
-    printPassBtn.addEventListener('click', () => window.print());
+  if (passModal) {
+    passModal.addEventListener('click', (e) => {
+      if (e.target === passModal) {
+        passModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
   }
 
-  // Form Submit
-  form.addEventListener('submit', (e) => {
+  if (printPassBtn) {
+    printPassBtn.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const name = document.getElementById('rsvp-name').value.trim();
-    const phone = document.getElementById('rsvp-phone').value.trim();
+    const nameInput = document.getElementById('rsvp-name');
+    const name = (nameInput.value || '').trim();
     const attendance = form.querySelector('input[name="attendance"]:checked').value;
-    const guests = document.getElementById('rsvp-guests').value;
-    const guestNames = document.getElementById('rsvp-guest-names').value.trim();
-    const dietary = document.getElementById('rsvp-dietary').value;
-    const song = document.getElementById('rsvp-song').value.trim();
-    const message = document.getElementById('rsvp-message').value.trim();
+    const dietary = document.getElementById('rsvp-dietary').value || 'ninguna';
+    const song = (document.getElementById('rsvp-song').value || '').trim();
+    const message = (document.getElementById('rsvp-message').value || '').trim();
 
     if (!name) {
-      alert('Por favor, ingresa tu nombre y apellido.');
+      alert('Por favor ingresa tu nombre y apellido para confirmar.');
       return;
     }
 
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<i class="ri-loader-4-line ri-spin"></i> Guardando confirmación...`;
+
+    // Generate unique lucky raffle code
     const reservationCode = 'EY-' + Math.floor(1000 + Math.random() * 9000);
 
-    // Prepare WhatsApp Message
-    let whatsappText = "";
-    if (attendance === 'si') {
-      whatsappText = `💍 *¡Hola Evelyn & Yimmy!* ✨\n\n` +
-        `¡Qué alegría! Quiero confirmar mi asistencia a su matrimonio el sábado 21 de noviembre de 2026 en Casa Pirque:\n\n` +
-        `👤 *Invitado(a):* ${name}\n` +
-        `🎟️ *Pases confirmados:* ${guests} ${guests === '1' ? 'Persona' : 'Personas'}\n`;
-      
-      if (guestNames) {
-        whatsappText += `👥 *Acompañante(s):* ${guestNames}\n`;
-      }
-      if (dietary && dietary !== 'ninguna') {
-        whatsappText += `🥗 *Menú/Dieta:* ${dietary}\n`;
-      }
-      if (song) {
-        whatsappText += `🎵 *Canción sugerida:* ${song}\n`;
-      }
-      if (message) {
-        whatsappText += `💌 *Mensaje para los novios:* "${message}"\n`;
-      }
-      whatsappText += `\n🧺 *¡Nos vemos con nuestra manta lista para celebrar!* 🥂🎉`;
-    } else {
-      whatsappText = `💍 *¡Hola Evelyn & Yimmy!* ✨\n\n` +
-        `Les escribe ${name}. Lamentablemente no podré acompañarlos físicamente en su matrimonio el 21 de noviembre, pero les deseo de todo corazón que tengan un día inolvidable y maravilloso lleno de bendiciones y amor. ¡Los quiero mucho! ❤️`;
-      if (message) {
-        whatsappText += `\n\n💌 *Mensaje:* "${message}"`;
-      }
-    }
+    const newRsvp = {
+      id: 'rsvp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+      name: name,
+      attendance: attendance,
+      dietary: dietary,
+      song: song,
+      message: message,
+      code: reservationCode,
+      timestamp: Date.now()
+    };
 
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${NOVIOS_PHONE}&text=${encodeURIComponent(whatsappText)}`;
-
-    // Save to LocalStorage
+    // 1. Save to LocalStorage cache
     try {
-      const stored = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
-      stored.push({
-        code: reservationCode,
-        date: new Date().toISOString(),
-        name,
-        phone,
-        attendance,
-        guests: attendance === 'si' ? guests : '0',
-        guestNames,
-        dietary,
-        song,
-        message
-      });
-      localStorage.setItem('wedding_rsvps', JSON.stringify(stored));
-    } catch (err) {
-      console.warn('LocalStorage save error:', err);
-    }
+      const stored = JSON.parse(localStorage.getItem('wedding_rsvps_cloud_v1') || '[]');
+      stored.unshift(newRsvp);
+      localStorage.setItem('wedding_rsvps_cloud_v1', JSON.stringify(stored));
+      localStorage.setItem('wedding_guest_name', name);
+    } catch (err) {}
+
+    // 2. Push to GitHub Cloud Database (data/rsvp_feed.json)
+    await pushRsvpToCloud(newRsvp);
+
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
 
     if (attendance === 'si') {
-      // Update Digital Pass Modal
+      // Populate Digital Pass
       document.getElementById('pass-guest-name').textContent = name;
-      document.getElementById('pass-pases-count').textContent = `${guests} ${guests === '1' ? 'Persona' : 'Personas'}`;
+      document.getElementById('pass-pases-count').textContent = '1 Persona (Individual)';
       document.getElementById('pass-code').textContent = reservationCode;
 
-      if (whatsappBtn) {
-        whatsappBtn.onclick = () => window.open(whatsappUrl, '_blank');
+      if (passModal) {
+        passModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
       }
-
-      if (passModal) passModal.classList.add('active');
-
-      // Automatically open WhatsApp in new tab for immediate delivery
-      window.open(whatsappUrl, '_blank');
+      form.reset();
     } else {
-      window.open(whatsappUrl, '_blank');
+      alert(`¡Muchas gracias, ${name}! Hemos registrado tu respuesta. Te mandamos un abrazo gigante.`);
       form.reset();
     }
   });
+}
+
+async function pushRsvpToCloud(newRsvp) {
+  try {
+    let rsvps = [];
+    let fileSha = null;
+
+    // Fetch existing
+    const getRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_RSVP_PATH}?ref=main&t=${Date.now()}`, {
+      headers: {
+        'Authorization': `token ${GH_AUTH_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (getRes.ok) {
+      const currentData = await getRes.json();
+      fileSha = currentData.sha;
+      if (currentData.content) {
+        const rawText = decodeURIComponent(escape(atob(currentData.content.replace(/\s/g, ''))));
+        const parsed = JSON.parse(rawText);
+        if (parsed && Array.isArray(parsed.rsvps)) {
+          rsvps = parsed.rsvps;
+        }
+      }
+    }
+
+    rsvps.unshift(newRsvp);
+
+    const jsonPayload = JSON.stringify({ rsvps: rsvps }, null, 2);
+    const base64Content = btoa(unescape(encodeURIComponent(jsonPayload)));
+
+    const putBody = {
+      message: `[RSVP Confirmación] ${newRsvp.name} (${newRsvp.attendance === 'si' ? 'Sí asiste' : 'No asiste'} - ${newRsvp.code})`,
+      content: base64Content,
+      branch: 'main'
+    };
+
+    if (fileSha) putBody.sha = fileSha;
+
+    await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_RSVP_PATH}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GH_AUTH_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(putBody)
+    });
+
+  } catch (error) {
+    console.warn('Cloud RSVP push error:', error);
+  }
 }

@@ -438,11 +438,11 @@ button {
 /* ---------- 5. HEADER & NAVIGATION ---------- */
 .vogue-header {
   position: fixed;
-  top: 40px;
+  top: 0;
   left: 0;
   width: 100%;
   z-index: 90;
-  background: rgba(250, 249, 246, 0.94);
+  background: rgba(241, 236, 224, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-gold);
@@ -2499,15 +2499,338 @@ body.theme-florido .ch-num {
   font-size: 0.8rem;
 }
 
-/* ---------- 12. SCROLL REVEAL ANIMATIONS ---------- */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+/* ==========================================================================
+   12. SPECIAL ADDITIONS: CONTEST BANNER, RAFFLE PASS & NOVIOS ADMIN
+   ========================================================================== */
+
+/* Photo Challenge Contest Announcement Banner */
+.challenge-contest-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(82, 122, 80, 0.12) 0%, rgba(212, 175, 55, 0.15) 100%);
+  border: 2px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1.8rem;
+  box-shadow: var(--shadow-editorial);
 }
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
+.trophy-icon {
+  font-size: 2.4rem;
+  color: var(--gold-dark);
+  flex-shrink: 0;
+}
+.contest-text h4 {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+.contest-text p {
+  font-size: 0.84rem;
+  color: var(--text-main);
+  line-height: 1.45;
+}
+
+/* Digital Pass Special Lucky Notice */
+.ticket-special-notice {
+  background: rgba(82, 122, 80, 0.12);
+  border: 1px dashed var(--gold-dark);
+  border-radius: 6px;
+  padding: 0.75rem 0.9rem;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.4;
+  text-align: left;
+}
+.ticket-special-notice i {
+  font-size: 1.3rem;
+  color: var(--gold-dark);
+  flex-shrink: 0;
+}
+
+/* Admin Access Button in Footer */
+.btn-admin-access {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--gold-dark);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border-gold);
+  border-radius: 20px;
+  transition: var(--transition-smooth);
+}
+.btn-admin-access:hover {
+  background: var(--gold-dark);
+  color: #fff;
+}
+
+/* Novios Admin Modal & Dashboard */
+.modal-admin-card {
+  max-width: 900px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.admin-login-box {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+.admin-login-form input[type="password"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+  text-align: center;
+  border: 2px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
+  margin-bottom: 0.8rem;
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--text-main);
+}
+.admin-login-form input[type="password"]:focus {
+  outline: none;
+  border-color: var(--gold-primary);
+}
+
+.admin-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(28, 27, 26, 0.1);
+  margin-bottom: 1.2rem;
+}
+.admin-dashboard-title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--text-main);
+}
+.admin-dashboard-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.btn-admin-logout {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  background: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  transition: var(--transition-smooth);
+}
+.btn-admin-logout:hover {
+  background: #c0392b;
+  color: #fff;
+}
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.4rem;
+}
+.stat-card {
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+.stat-card.stat-yes {
+  background: rgba(46, 204, 113, 0.12);
+  border-color: rgba(46, 204, 113, 0.3);
+}
+.stat-card.stat-no {
+  background: rgba(231, 76, 60, 0.08);
+  border-color: rgba(231, 76, 60, 0.25);
+}
+.stat-card.stat-total {
+  background: rgba(82, 122, 80, 0.1);
+  border-color: var(--border-gold);
+}
+.stat-num {
+  font-size: 2rem;
+  font-weight: 800;
+  display: block;
+  line-height: 1.1;
+  color: var(--text-main);
+}
+.stat-lbl {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.2rem;
+}
+.admin-tab-btn {
+  padding: 0.6rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: var(--transition-smooth);
+}
+.admin-tab-btn.active {
+  color: var(--text-main);
+  border-bottom-color: var(--gold-dark);
+}
+.admin-tab-pane {
+  display: none;
+}
+.admin-tab-pane.active {
+  display: block;
+}
+
+.admin-actions-bar {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.btn-admin-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--gold-gradient);
+  color: var(--bg-dark);
+  border-radius: var(--border-radius-card);
+  transition: var(--transition-smooth);
+}
+.btn-admin-action:hover {
+  box-shadow: var(--shadow-gold);
+}
+.btn-outline-action {
+  background: transparent;
+  border: 1px solid var(--border-gold);
+  color: var(--text-main);
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  text-align: left;
+}
+.admin-table th {
+  background: rgba(0, 0, 0, 0.04);
+  padding: 0.75rem 0.6rem;
+  font-weight: 700;
+  color: var(--text-main);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+.admin-table td {
+  padding: 0.7rem 0.6rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: var(--text-main);
+}
+.admin-table tr:hover td {
+  background: rgba(0, 0, 0, 0.02);
+}
+.badge-status {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 12px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.status-yes {
+  background: #d4edda;
+  color: #155724;
+}
+.status-no {
+  background: #f8d7da;
+  color: #721c24;
+}
+.code-tag {
+  font-family: monospace;
+  background: #eee7d8;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.cell-message {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.admin-photo-card {
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+.admin-photo-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+.admin-photo-info {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+}
+.admin-photo-author {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.btn-dl-single {
+  margin-top: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-size: 0.68rem;
+  color: var(--text-main);
+  font-weight: 600;
+}
+.btn-dl-single:hover {
+  background: var(--gold-dark);
+  color: #fff;
 }
 
 /* ---------- 13. SPECIAL MOBILE OVERRIDES (< 480px) ---------- */
@@ -2518,21 +2841,11 @@ body.theme-florido .ch-num {
   .mobile-toggle {
     display: block;
   }
-  .top-style-selector {
-    padding: 0.25rem 0.3rem;
-  }
-  .style-selector-title {
-    font-size: 0.6rem;
-  }
-  .style-btn {
-    padding: 0.2rem 0.45rem;
-    font-size: 0.62rem;
-  }
   .vogue-header {
-    top: 32px;
+    top: 0;
   }
   .hero-cover {
-    padding-top: 6.5rem;
+    padding-top: 5.5rem;
     padding-bottom: 2.5rem;
   }
   .hero-border-frame {
@@ -2541,18 +2854,6 @@ body.theme-florido .ch-num {
   .frame-ornament {
     width: 48px;
     height: 48px;
-  }
-  body.theme-florido .frame-ornament {
-    width: 60px;
-    height: 60px;
-  }
-  body.theme-campestre .frame-ornament {
-    width: 55px;
-    height: 55px;
-  }
-  body.theme-tradicional .frame-ornament {
-    width: 50px;
-    height: 50px;
   }
   .section-editorial {
     padding: 3.5rem 0;
@@ -2577,4 +2878,9 @@ body.theme-florido .ch-num {
   .rsvp-editorial-wrapper {
     padding: 1.8rem 1rem;
   }
+  .challenge-contest-banner {
+    flex-direction: column;
+    text-align: center;
+  }
 }
+

@@ -16,59 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   0. THEME SWITCHER (🖤 Vogue • 🌿 Campestre • ✨ Clásico • 🌸 Florido)
+   0. ESTILO VISUAL: CAMPESTRE RÚSTICO & BOTÁNICO (Estilo Oficial Elegido)
    ========================================================================== */
-let activeAtmosphereTheme = 'theme-vogue';
+let activeAtmosphereTheme = 'theme-campestre';
 
 function initThemeSwitcher() {
-  const themeBtns = document.querySelectorAll('.style-btn');
-  const validThemes = ['theme-vogue', 'theme-campestre', 'theme-tradicional', 'theme-florido'];
-
-  function applyTheme(themeName) {
-    if (!validThemes.includes(themeName)) themeName = 'theme-vogue';
-
-    validThemes.forEach(t => document.body.classList.remove(t));
-    document.body.classList.add(themeName);
-    activeAtmosphereTheme = themeName;
-
-    themeBtns.forEach(btn => {
-      if (btn.getAttribute('data-theme') === themeName) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-
-    if (window.resetAtmosphereParticles) {
-      window.resetAtmosphereParticles(themeName);
-    }
-
-    try {
-      localStorage.setItem('wedding_style_theme_v2', themeName);
-    } catch (e) {
-      console.warn('LocalStorage theme error:', e);
-    }
+  document.body.classList.remove('theme-vogue', 'theme-tradicional', 'theme-florido');
+  document.body.classList.add('theme-campestre');
+  activeAtmosphereTheme = 'theme-campestre';
+  if (window.resetAtmosphereParticles) {
+    window.resetAtmosphereParticles('theme-campestre');
   }
-
-  // Load saved theme or default to theme-vogue
-  let savedTheme = 'theme-vogue';
-  try {
-    savedTheme = localStorage.getItem('wedding_style_theme_v2') || 'theme-vogue';
-  } catch (e) {}
-
-  applyTheme(savedTheme);
-
-  // Attach click events
-  themeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const selected = btn.getAttribute('data-theme');
-      applyTheme(selected);
-    });
-  });
 }
 
 /* ==========================================================================
-   0.1 ATMOSPHERIC PARTICLES ENGINE (Petals, Leaves, Gold Sparkles, Bokeh)
+   0.1 ATMOSPHERIC PARTICLES ENGINE (Eucalyptus Leaves & Nature)
    ========================================================================== */
 function initAtmosphereParticles() {
   const canvas = document.getElementById('particle-canvas');
@@ -87,50 +49,32 @@ function initAtmosphereParticles() {
   const particleCount = window.innerWidth < 600 ? 18 : 32;
   let particles = [];
 
-  class Particle {
+  class AtmosphereParticle {
     constructor(theme) {
       this.reset(theme, true);
     }
 
     reset(theme, initial = false) {
-      this.theme = theme || activeAtmosphereTheme;
+      this.theme = theme;
       this.x = Math.random() * width;
       this.y = initial ? Math.random() * height : -20;
       this.size = Math.random() * 8 + 6;
-      this.speedY = Math.random() * 1.2 + 0.6;
-      this.speedX = Math.sin(Math.random() * Math.PI) * 0.8 - 0.4;
+      this.speedY = Math.random() * 0.8 + 0.5;
+      this.speedX = Math.sin(Math.random() * Math.PI * 2) * 0.5;
       this.rotation = Math.random() * Math.PI * 2;
       this.rotSpeed = (Math.random() - 0.5) * 0.03;
-      this.opacity = Math.random() * 0.5 + 0.35;
+      this.opacity = Math.random() * 0.45 + 0.35;
       this.flip = Math.random() * Math.PI;
-      this.flipSpeed = Math.random() * 0.03 + 0.01;
-
-      // Type-specific tweaks
-      if (this.theme === 'theme-tradicional') {
-        this.y = initial ? Math.random() * height : height + 10;
-        this.speedY = -(Math.random() * 0.8 + 0.4); // Sparkles rise up
-        this.size = Math.random() * 3 + 2;
-      } else if (this.theme === 'theme-vogue') {
-        this.y = initial ? Math.random() * height : height + 20;
-        this.speedY = -(Math.random() * 0.5 + 0.3); // Bokeh rises
-        this.size = Math.random() * 12 + 6;
-        this.opacity = Math.random() * 0.15 + 0.05;
-      }
+      this.flipSpeed = Math.random() * 0.02 + 0.01;
     }
 
     update() {
       this.y += this.speedY;
-      this.x += this.speedX + Math.sin(this.flip) * 0.5;
+      this.x += this.speedX + Math.sin(this.y * 0.015) * 0.4;
       this.rotation += this.rotSpeed;
       this.flip += this.flipSpeed;
 
-      // Wrap-around bounds
-      if (this.theme === 'theme-tradicional' || this.theme === 'theme-vogue') {
-        if (this.y < -30) this.reset(this.theme, false);
-      } else {
-        if (this.y > height + 30) this.reset(this.theme, false);
-      }
-
+      if (this.y > height + 30) this.reset(this.theme, false);
       if (this.x < -30) this.x = width + 20;
       if (this.x > width + 30) this.x = -20;
     }
@@ -142,41 +86,14 @@ function initAtmosphereParticles() {
       ctx.scale(Math.cos(this.flip), 1);
       ctx.globalAlpha = this.opacity;
 
-      if (this.theme === 'theme-florido') {
-        // Soft dusty blue & white floral petal
-        ctx.fillStyle = '#96C1DE';
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.bezierCurveTo(-this.size, -this.size * 0.6, -this.size * 0.6, -this.size * 1.5, 0, -this.size * 1.8);
-        ctx.bezierCurveTo(this.size * 0.6, -this.size * 1.5, this.size, -this.size * 0.6, 0, 0);
-        ctx.fill();
-        ctx.fillStyle = '#E8F2F8';
-        ctx.globalAlpha = this.opacity * 0.7;
-        ctx.fill();
-      } else if (this.theme === 'theme-campestre') {
-        // Green Eucalyptus/Olive leaf
-        ctx.fillStyle = '#8BAE88';
-        ctx.beginPath();
-        ctx.ellipse(0, 0, this.size * 0.45, this.size * 1.1, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#527A50';
-        ctx.globalAlpha = this.opacity * 0.6;
-        ctx.fill();
-      } else if (this.theme === 'theme-tradicional') {
-        // Golden royal star sparkle
-        ctx.fillStyle = '#D4AF37';
-        ctx.shadowColor = '#F5E6B3';
-        ctx.shadowBlur = 6;
-        ctx.beginPath();
-        ctx.arc(0, 0, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        // Vogue luxury bokeh
-        ctx.fillStyle = '#C5A059';
-        ctx.beginPath();
-        ctx.arc(0, 0, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      // Green Eucalyptus/Olive leaf for Campestre theme
+      ctx.fillStyle = '#8BAE88';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.size * 0.45, this.size * 1.1, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#527A50';
+      ctx.globalAlpha = this.opacity * 0.6;
+      ctx.fill();
 
       ctx.restore();
     }
@@ -185,7 +102,7 @@ function initAtmosphereParticles() {
   function setupParticles(theme) {
     particles = [];
     for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle(theme));
+      particles.push(new AtmosphereParticle(theme));
     }
   }
 
@@ -193,7 +110,7 @@ function initAtmosphereParticles() {
     setupParticles(theme);
   };
 
-  setupParticles(activeAtmosphereTheme);
+  setupParticles('theme-campestre');
 
   function loop() {
     ctx.clearRect(0, 0, width, height);
@@ -208,10 +125,10 @@ function initAtmosphereParticles() {
 }
 
 /* ==========================================================================
-   1. COUNTDOWN TIMER (November 21, 2026 at 11:00 AM Santiago)
+   1. COUNTDOWN TIMER (November 21, 2026 at 11:30 AM Santiago)
    ========================================================================== */
 function initCountdown() {
-  const weddingDate = new Date('2026-11-21T11:00:00-03:00').getTime();
+  const weddingDate = new Date('2026-11-21T11:30:00-03:00').getTime();
 
   const daysEl = document.getElementById('cd-days');
   const hoursEl = document.getElementById('cd-hours');
@@ -259,7 +176,7 @@ function initCalendarActions() {
   const title = encodeURIComponent("Matrimonio Evelyn López & Yimmy Salgado 💍");
   const details = encodeURIComponent("¡Celebración del matrimonio de Evelyn y Yimmy en Casa Pirque! Dress Code: Campestre Elegante. Recuerda traer tu manta para instalarte en el césped 🧺🌿.");
   const location = encodeURIComponent("Casa Pirque, Pirque, Región Metropolitana, Chile");
-  const startIso = "20261121T140000Z";
+  const startIso = "20261121T143000Z";
   const endIso = "20261122T040000Z";
 
   googleBtns.forEach(btn => {
