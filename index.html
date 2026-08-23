@@ -56,6 +56,9 @@
         <a href="#desafios" class="nav-item">Desafío Fotos</a>
         <a href="#galeria" class="nav-item">Álbum</a>
         <a href="#rsvp" class="nav-btn-rsvp">Confirmar Asistencia</a>
+        <button class="nav-btn-admin" id="btn-navbar-admin" title="Panel exclusivo para los novios">
+          <i class="ri-lock-line"></i> Acceso Novios
+        </button>
       </nav>
 
       <button class="mobile-toggle" id="btn-mobile-toggle" aria-label="Abrir menú">
@@ -83,6 +86,11 @@
       <li><a href="#desafios" class="drawer-link">Desafío de Fotos 📸</a></li>
       <li><a href="#galeria" class="drawer-link">Álbum de Recuerdos</a></li>
       <li><a href="#rsvp" class="drawer-cta">Confirmar Asistencia (RSVP)</a></li>
+      <li>
+        <button class="drawer-admin-btn" id="btn-drawer-admin">
+          <i class="ri-lock-line"></i> 💍 Acceso Novios (Administración)
+        </button>
+      </li>
     </ul>
   </div>
 
@@ -149,10 +157,16 @@
             <span>Confirmar Asistencia</span>
             <i class="ri-arrow-right-up-line"></i>
           </a>
-          <button id="btn-google-cal-hero" class="btn-vogue-secondary">
-            <i class="ri-google-fill"></i>
-            <span>Agendar en Google Calendar</span>
-          </button>
+          <div class="hero-cal-buttons">
+            <button id="btn-google-cal-hero" class="btn-vogue-secondary">
+              <i class="ri-google-fill"></i>
+              <span>Google Calendar</span>
+            </button>
+            <button id="btn-apple-cal-hero" class="btn-vogue-secondary btn-apple-cal">
+              <i class="ri-apple-fill"></i>
+              <span>iPhone / Apple</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -179,6 +193,9 @@
             <div class="card-calendar-actions">
               <button class="btn-card-action" id="btn-google-cal">
                 <i class="ri-google-fill"></i> Agendar en Google Calendar
+              </button>
+              <button class="btn-card-action btn-card-apple" id="btn-apple-cal">
+                <i class="ri-apple-fill"></i> Agendar en iPhone / Apple Calendar
               </button>
             </div>
           </div>
@@ -252,13 +269,13 @@
             </div>
           </div>
 
-          <!-- 16:30 PM -->
+          <!-- 16:00 PM -->
           <div class="timeline-item">
-            <div class="timeline-time">04:30 PM</div>
+            <div class="timeline-time">04:00 PM</div>
             <div class="timeline-bullet"><i class="ri-music-fill"></i></div>
             <div class="timeline-content">
               <h4 class="t-title">¡Música &amp; Fiesta!</h4>
-              <p class="t-desc">A las 16:30 hrs comenzará la música y la pista de baile para todos los que quieran darlo todo celebrando.</p>
+              <p class="t-desc">A las 16:00 hrs comenzará la música y la pista de baile para todos los que quieran darlo todo celebrando.</p>
             </div>
           </div>
         </div>
@@ -285,68 +302,65 @@
               </div>
               <div class="picnic-item">
                 <i class="ri-checkbox-circle-line"></i>
-                <span><strong>Calzado cómodo:</strong> Les sugerimos zapatos planos, plataformas o taco ancho para caminar y disfrutar el pasto sin problemas.</span>
+                <span>¡Habrán cojines, sombra y muy buena compañía!</span>
               </div>
             </div>
           </div>
 
           <div class="picnic-image-side">
-            <img src="assets/images/picnic_lawn.jpg" alt="Zona de picnic y pasto" class="picnic-img">
+            <img src="assets/images/picnic_lawn.jpg" alt="Momento Manta y Picnic">
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SECTION: DRESS CODE -->
+    <!-- SECTION: CÓDIGO DE VESTIMENTA -->
     <section class="section-editorial reveal" id="dresscode">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">Código de Vestimenta</h2>
-          <p class="section-subtitle">Campestre Elegante / Formal de Día</p>
+          <p class="section-subtitle">Campestre Elegante &amp; Cómodo</p>
           <div class="title-divider"></div>
         </div>
 
+        <div class="dresscode-advice-box">
+          <p>
+            Queremos que te sientas elegante pero muy cómodo para disfrutar del pasto y la naturaleza. Sugerimos calzado adecuado para césped (tacos anchos, plataformas o zapatos cómodos).
+          </p>
+        </div>
+
         <div class="lookbook-grid">
-          <!-- Damas -->
+          <!-- Mujeres -->
           <div class="lookbook-card">
-            <div class="lookbook-img-frame">
-              <img src="assets/images/dresscode_women.jpg" alt="Vestimenta Damas" class="lookbook-img">
-              <span class="lookbook-tag">DAMAS</span>
+            <div class="lookbook-img-wrap">
+              <img src="assets/images/dresscode_women.jpg" alt="Inspiración Mujeres Campestre Elegante">
+              <div class="lookbook-badge">ELLAS</div>
             </div>
             <div class="lookbook-body">
-              <h3 class="lookbook-name">Elegancia Primaveral</h3>
+              <h3 class="lookbook-title">Vestidos &amp; Estilo Femenino</h3>
               <p class="lookbook-desc">
-                Vestidos midi o largos frescos, telas livianas, estampados florales o colores alegres.
+                Vestidos midi o largos en telas frescas y fluidas, estampados florales o tonos suaves. ¡Importante: taco ancho o plano para caminar cómodas en el pasto!
               </p>
-              <div class="lookbook-tips">
-                <p><strong>💡 Calzado sugerido:</strong> Taco ancho, terraplén o sandalias cómodas para el césped.</p>
-                <p><strong>🚫 Evitar:</strong> Color blanco / marfil (reservado para la novia).</p>
-              </div>
             </div>
           </div>
 
-          <!-- Varones -->
+          <!-- Hombres -->
           <div class="lookbook-card">
-            <div class="lookbook-img-frame">
-              <img src="assets/images/dresscode_men.jpg" alt="Vestimenta Varones" class="lookbook-img">
-              <span class="lookbook-tag">VARONES</span>
+            <div class="lookbook-img-wrap">
+              <img src="assets/images/dresscode_men.jpg" alt="Inspiración Hombres Campestre Elegante">
+              <div class="lookbook-badge">ELLOS</div>
             </div>
             <div class="lookbook-body">
-              <h3 class="lookbook-name">Formal Contemporáneo</h3>
+              <h3 class="lookbook-title">Trajes &amp; Estilo Masculino</h3>
               <p class="lookbook-desc">
-                Traje ligero o combinación de pantalón de vestir con camisa formal y blazer. Tonos beige, azul, gris o lino.
+                Trajes en lino o telas ligeras, pantalones de vestir combinados con guayabera, camisa o blazer en tonos beige, tierra o azul. Corbata opcional.
               </p>
-              <div class="lookbook-tips">
-                <p><strong>💡 Estilo:</strong> Zapatos o mocasines cómodos.</p>
-                <p><strong>🚫 Evitar:</strong> ¡Por favor NO llevar camiseta del Colo! (ni ropa deportiva 😉⚽).</p>
-              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SECTION: LISTA DE REGALOS -->
     <!-- SECTION: LISTA DE REGALOS -->
     <section class="section-editorial section-dark reveal" id="regalos">
       <div class="container">
@@ -390,7 +404,7 @@
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">Desafío de Fotos 📸</h2>
-          <p class="section-subtitle">¡Queremos recopilar los mejores momentos de nuestra boda! Durante el día, intenta completar estos desafíos fotográficos y súbelos a nuestro álbum:</p>
+          <p class="section-subtitle">¡Queremos recopilar los mejores momentos de nuestra boda! Durante el día, intenta completar estos 12 desafíos fotográficos y súbelos aquí mismo:</p>
           <div class="title-divider"></div>
         </div>
 
@@ -400,77 +414,61 @@
             <i class="ri-trophy-line trophy-icon"></i>
             <div class="contest-text">
               <h4>🏆 ¡Gran Concurso de Fotos!</h4>
-              <p>La foto que tenga <strong>más "Me Gusta" (❤️)</strong> en el álbum antes de las <strong>19:00 hrs</strong> ganará una gran sorpresa de parte de los novios. ¡A participar y dar Me Gusta!</p>
+              <p>La foto que tenga <strong>más "Me Gusta" (❤️)</strong> antes de las <strong>19:00 hrs</strong> ganará una gran sorpresa de parte de los novios. ¡A participar y dar Me Gusta!</p>
             </div>
           </div>
 
           <div class="challenge-grid">
-            <div class="challenge-card">
-              <span class="ch-num">01</span>
-              <p class="ch-text">Foto con los lentes de la novia 🕶️</p>
-            </div>
-            <div class="challenge-card">
-              <span class="ch-num">02</span>
-              <p class="ch-text">Foto tomándote un shot 🥃</p>
-            </div>
-            <div class="challenge-card">
-              <span class="ch-num">03</span>
-              <p class="ch-text">Foto instagrameable en los spots decorados 📸✨</p>
-            </div>
-            <div class="challenge-card">
-              <span class="ch-num">04</span>
-              <p class="ch-text">Foto abrazando un árbol de Casa Pirque 🌳</p>
-            </div>
-            <div class="challenge-card">
-              <span class="ch-num">05</span>
-              <p class="ch-text">Foto con los recién casados (Evelyn &amp; Yimmy) 💍</p>
-            </div>
-            <div class="challenge-card">
-              <span class="ch-num">06</span>
-              <p class="ch-text">Foto con los padres de los novios 👨‍👩‍👧‍👦</p>
-            </div>
-            <div class="challenge-card">
-              <span class="ch-num">07</span>
-              <p class="ch-text">Foto de tu grupo relajándose en la manta de pasto 🧺</p>
-            </div>
-            <div class="challenge-card">
-              <span class="ch-num">08</span>
-              <p class="ch-text">Foto brindando por el amor con tu trago favorito 🥂</p>
-            </div>
-            <div class="challenge-card">
-              <span class="ch-num">09</span>
-              <p class="ch-text">Foto divertida dándolo todo en la pista de baile 🕺💃</p>
-            </div>
-            <div class="challenge-card">
-              <span class="ch-num">10</span>
-              <p class="ch-text">La foto más espontánea y divertida del día ✨</p>
-            </div>
+            <div class="challenge-card"><span class="ch-num">01</span><p class="ch-text">Foto con los lentes de la novia 🕶️</p></div>
+            <div class="challenge-card"><span class="ch-num">02</span><p class="ch-text">Foto tomándote un shot 🥃</p></div>
+            <div class="challenge-card"><span class="ch-num">03</span><p class="ch-text">Foto instagrameable en los spots decorados 📸✨</p></div>
+            <div class="challenge-card"><span class="ch-num">04</span><p class="ch-text">Foto abrazando un árbol de Casa Pirque 🌳</p></div>
+            <div class="challenge-card"><span class="ch-num">05</span><p class="ch-text">Foto con los recién casados (Evelyn &amp; Yimmy) 💍</p></div>
+            <div class="challenge-card"><span class="ch-num">06</span><p class="ch-text">Foto con los padres de los novios 👨‍👩‍👧‍👦</p></div>
+            <div class="challenge-card"><span class="ch-num">07</span><p class="ch-text">Foto de tu grupo relajándose en la manta de pasto 🧺</p></div>
+            <div class="challenge-card"><span class="ch-num">08</span><p class="ch-text">Foto brindando por el amor con tu trago favorito 🥂</p></div>
+            <div class="challenge-card"><span class="ch-num">09</span><p class="ch-text">Foto divertida dándolo todo en la pista de baile 🕺💃</p></div>
+            <div class="challenge-card"><span class="ch-num">10</span><p class="ch-text">La foto más espontánea y divertida del día ✨</p></div>
+            <div class="challenge-card"><span class="ch-num">11</span><p class="ch-text">Foto emotiva durante la ceremonia (Civil o Religiosa) 🥹💍</p></div>
+            <div class="challenge-card"><span class="ch-num">12</span><p class="ch-text">Foto grupal con tu familia o amigos 👨‍👩‍👧‍👦🎉</p></div>
           </div>
+          
           <div class="challenge-cta">
             <button class="btn-vogue-gold" id="btn-challenge-upload">
               <i class="ri-camera-lens-line"></i>
-              <span>¡Subir una Foto del Desafío al Álbum!</span>
+              <span>¡Subir una Foto para los Desafíos!</span>
             </button>
           </div>
+
+          <!-- Galería Exclusiva de Fotos de Desafíos -->
+          <div class="challenge-gallery-container">
+            <h3 class="challenge-gallery-heading">
+              <i class="ri-gallery-upload-line"></i> Fotos Subidas para los Desafíos
+            </h3>
+            <p class="challenge-gallery-sub">¡Vota con un ❤️ por tu favorita para el premio de las 19:00 hrs!</p>
+            <div class="gallery-masonry" id="challenge-gallery-grid">
+              <!-- Rendered dynamically by gallery.js -->
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
 
-    <!-- SECTION: ÁLBUM DE FOTOS -->
+    <!-- SECTION: ÁLBUM DE FOTOS (FOTOS DE INVITADOS) -->
     <section class="section-editorial reveal" id="galeria">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">Álbum de Recuerdos</h2>
-          <p class="section-subtitle">Fotos de nuestros invitados, desafíos y momentos compartidos:</p>
+          <p class="section-subtitle">Fotos libres y momentos compartidos por nuestros invitados:</p>
           <div class="title-divider"></div>
         </div>
 
         <div class="gallery-controls">
           <div class="gallery-filters" id="gallery-filters">
-            <button class="filter-btn active" data-filter="all">Todas las Fotos</button>
-            <button class="filter-btn" data-filter="invitados">Fotos de Invitados</button>
-            <button class="filter-btn" data-filter="desafios">Desafío de Fotos 📸</button>
+            <button class="filter-btn active" data-filter="invitados">Fotos de Invitados</button>
             <button class="filter-btn" data-filter="lugar">Casa Pirque</button>
+            <button class="filter-btn" data-filter="all">Ver Todas</button>
           </div>
           <button class="btn-upload-photo" id="btn-open-upload">
             <i class="ri-upload-cloud-2-line"></i>
@@ -703,8 +701,8 @@
         </div>
 
         <div class="form-group">
-          <label for="upload-caption">Dedicatoria o Descripción *</label>
-          <textarea id="upload-caption" rows="2" placeholder="Ej.: ¡Celebrando con los novios! 🎉" required></textarea>
+          <label for="upload-caption">Dedicatoria o Descripción (Opcional)</label>
+          <textarea id="upload-caption" rows="2" placeholder="Ej.: ¡Celebrando con los novios! 🎉 (Opcional)"></textarea>
         </div>
 
         <div class="form-group">
@@ -862,6 +860,10 @@
             <button class="btn-admin-action btn-outline-action" id="btn-export-rsvps-csv">
               <i class="ri-file-excel-line"></i>
               <span>📥 Exportar Lista a Excel / CSV</span>
+            </button>
+            <button class="btn-admin-action btn-outline-action" id="btn-quick-download-photos">
+              <i class="ri-download-cloud-2-line"></i>
+              <span>📥 Descargar Todas las Fotos</span>
             </button>
           </div>
 

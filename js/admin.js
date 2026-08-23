@@ -16,8 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initAdminModal();
 });
 
-function initAdminModal() {
-  const openBtn = document.getElementById('btn-open-admin');
+  const openBtns = [
+    document.getElementById('btn-open-admin'),
+    document.getElementById('btn-navbar-admin'),
+    document.getElementById('btn-drawer-admin')
+  ];
   const modal = document.getElementById('admin-modal');
   const closeBtn = document.getElementById('btn-close-admin');
   const loginForm = document.getElementById('admin-login-form');
@@ -25,18 +28,24 @@ function initAdminModal() {
   const dashboard = document.getElementById('admin-dashboard');
   const logoutBtn = document.getElementById('btn-admin-logout');
 
-  if (openBtn) {
-    openBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (sessionStorage.getItem('novios_logged_in') === 'true') {
-        showDashboard();
-      } else {
-        showLoginForm();
-      }
-      if (modal) modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    });
-  }
+  openBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Close mobile drawer if open
+        const drawer = document.getElementById('mobile-drawer');
+        if (drawer) drawer.classList.remove('active');
+
+        if (sessionStorage.getItem('novios_logged_in') === 'true') {
+          showDashboard();
+        } else {
+          showLoginForm();
+        }
+        if (modal) modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    }
+  });
 
   if (closeBtn && modal) {
     closeBtn.addEventListener('click', () => {
@@ -113,6 +122,11 @@ function initAdminModal() {
   const btnDownloadAllPhotos = document.getElementById('btn-download-all-photos');
   if (btnDownloadAllPhotos) {
     btnDownloadAllPhotos.addEventListener('click', downloadAllPhotosBulk);
+  }
+
+  const btnQuickDownload = document.getElementById('btn-quick-download-photos');
+  if (btnQuickDownload) {
+    btnQuickDownload.addEventListener('click', downloadAllPhotosBulk);
   }
 }
 

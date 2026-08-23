@@ -13,11 +13,14 @@ const GH_AUTH_TOKEN = [103, 104, 112, 95, 115, 103, 117, 80, 99, 73, 112, 65, 68
 const CLOUD_STORAGE_KEY = 'eve_yimmy_wedding_album_cache_v3';
 const LIKED_PHOTOS_KEY = 'eve_yimmy_liked_photos_v3';
 
-let activeCategoryFilter = 'all';
+let activeCategoryFilter = 'invitados';
 let weddingPhotos = [];
 let activePhotoForLightbox = null;
 let currentFileSha = null;
 let isSyncingToCloud = false;
+
+// Expose to window for admin panel
+window.weddingPhotos = weddingPhotos;
 
 // Fallback seed photos
 const DEFAULT_SEED_PHOTOS = [
@@ -110,9 +113,16 @@ function initFilterButtons() {
 }
 
 function renderGallery() {
+  window.weddingPhotos = weddingPhotos;
+  renderMainGuestGallery();
+  renderChallengeGallery();
+}
+
+function renderMainGuestGallery() {
   const grid = document.getElementById('gallery-grid');
   if (!grid) return;
 
+  // Filter for guest memories
   const filtered = activeCategoryFilter === 'all'
     ? weddingPhotos
     : weddingPhotos.filter(p => p.category === activeCategoryFilter);
@@ -130,46 +140,70 @@ function renderGallery() {
 
   const likedIds = getLikedPhotoIds();
 
-  grid.innerHTML = filtered.map(photo => {
-    const isLiked = likedIds.includes(photo.id);
-    const likeCount = photo.likes || 0;
-    const commentsCount = (photo.comments || []).length;
-    const relativeTime = formatRelativeTime(photo.timestamp);
+  grid.innerHTML = filtered.map(photo => renderPhotoCardHtml(photo, likedIds)).join('');
+}
 
-    return `
-      <div class="gallery-social-card" data-photo-id="${photo.id}">
-        <div class="gallery-card-img-wrap" onclick="openLightboxForPhoto('${photo.id}')">
-          <img src="${escapeHtml(photo.url)}" alt="${escapeHtml(photo.caption || 'Foto del Matrimonio')}" loading="lazy">
-          <div class="gallery-card-hover-overlay">
-            <i class="ri-zoom-in-line"></i>
-            <span>Ver foto y comentarios</span>
-          </div>
-        </div>
+function renderChallengeGallery() {
+  const challengeGrid = document.getElementById('challenge-gallery-grid');
+  if (!challengeGrid) return;
 
-        <div class="gallery-card-body">
-          <div class="gallery-card-header">
-            <span class="gallery-card-author"><i class="ri-user-smile-line"></i> ${escapeHtml(photo.author || 'Invitado')}</span>
-            <span class="gallery-card-time">${relativeTime}</span>
-          </div>
+  const challengePhotos = weddingPhotos.filter(p => p.category === 'desafios');
 
-          <p class="gallery-card-caption">${escapeHtml(photo.caption || '')}</p>
-
-          <!-- Social Interaction Bar (Like & Comments) -->
-          <div class="gallery-card-actions">
-            <button class="btn-card-like ${isLiked ? 'liked' : ''}" onclick="toggleLikePhoto('${photo.id}', event)">
-              <i class="${isLiked ? 'ri-heart-fill' : 'ri-heart-line'}"></i>
-              <span class="like-counter">${likeCount}</span>
-            </button>
-            
-            <button class="btn-card-comments" onclick="openLightboxForPhoto('${photo.id}')">
-              <i class="ri-chat-1-line"></i>
-              <span>${commentsCount} ${commentsCount === 1 ? 'comentario' : 'comentarios'}</span>
-            </button>
-          </div>
-        </div>
+  if (challengePhotos.length === 0) {
+    challengeGrid.innerHTML = `
+      <div class="gallery-empty-state" style="grid-column: 1 / -1; text-align: center; padding: 2rem 1rem; color: var(--text-muted); background: rgba(0,0,0,0.02); border: 1px dashed var(--border-gold); border-radius: var(--border-radius-card);">
+        <i class="ri-camera-lens-line" style="font-size: 2.2rem; color: var(--gold-primary); display: block; margin-bottom: 0.5rem;"></i>
+        <p style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">Aún no se han subido fotos para los desafíos fotográficos.</p>
+        <p style="font-size: 0.78rem; margin-top: 0.3rem;">¡Cumple uno de los 12 desafíos de arriba, sube tu foto y compite por el premio de las 19:00 hrs! 🏆✨</p>
       </div>
     `;
-  }).join('');
+    return;
+  }
+
+  const likedIds = getLikedPhotoIds();
+  challengeGrid.innerHTML = challengePhotos.map(photo => renderPhotoCardHtml(photo, likedIds)).join('');
+}
+
+function renderPhotoCardHtml(photo, likedIds) {
+  const isLiked = likedIds.includes(photo.id);
+  const likeCount = photo.likes || 0;
+  const commentsCount = (photo.comments || []).length;
+  const relativeTime = formatRelativeTime(photo.timestamp);
+  const captionText = photo.caption ? `<p class="gallery-card-caption">${escapeHtml(photo.caption)}</p>` : '';
+
+  return `
+    <div class="gallery-social-card" data-photo-id="${photo.id}">
+      <div class="gallery-card-img-wrap" onclick="openLightboxForPhoto('${photo.id}')">
+        <img src="${escapeHtml(photo.url)}" alt="${escapeHtml(photo.caption || 'Foto del Matrimonio')}" loading="lazy">
+        <div class="gallery-card-hover-overlay">
+          <i class="ri-zoom-in-line"></i>
+          <span>Ver foto y comentarios</span>
+        </div>
+      </div>
+
+      <div class="gallery-card-body">
+        <div class="gallery-card-header">
+          <span class="gallery-card-author"><i class="ri-user-smile-line"></i> ${escapeHtml(photo.author || 'Invitado')}</span>
+          <span class="gallery-card-time">${relativeTime}</span>
+        </div>
+
+        ${captionText}
+
+        <!-- Social Interaction Bar (Like & Comments) -->
+        <div class="gallery-card-actions">
+          <button class="btn-card-like ${isLiked ? 'liked' : ''}" onclick="toggleLikePhoto('${photo.id}', event)">
+            <i class="${isLiked ? 'ri-heart-fill' : 'ri-heart-line'}"></i>
+            <span class="like-counter">${likeCount}</span>
+          </button>
+          
+          <button class="btn-card-comments" onclick="openLightboxForPhoto('${photo.id}')">
+            <i class="ri-chat-1-line"></i>
+            <span>${commentsCount} ${commentsCount === 1 ? 'comentario' : 'comentarios'}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 /* ==========================================================================
@@ -514,9 +548,11 @@ function initUploadModal() {
         closeModal();
         alert('¡Foto publicada con éxito! Ya está disponible en la nube para todos los invitados.');
 
-        const galleryEl = document.getElementById('galeria');
-        if (galleryEl) {
-          galleryEl.scrollIntoView({ behavior: 'smooth' });
+        const targetSection = category === 'desafios'
+          ? document.getElementById('desafios')
+          : document.getElementById('galeria');
+        if (targetSection) {
+          targetSection.scrollIntoView({ behavior: 'smooth' });
         }
 
       } catch (error) {

@@ -2833,6 +2833,84 @@ body.theme-florido .ch-num {
   color: #fff;
 }
 
+/* Navbar & Drawer Admin Buttons */
+.nav-btn-admin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.8rem;
+  background: rgba(82, 122, 80, 0.15);
+  color: var(--gold-dark);
+  border: 1px solid var(--border-gold);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: var(--transition-smooth);
+}
+.nav-btn-admin:hover {
+  background: var(--gold-dark);
+  color: #fff;
+}
+.drawer-admin-btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  background: rgba(82, 122, 80, 0.12);
+  color: var(--gold-dark);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--border-radius-card);
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+/* Hero Calendar Buttons */
+.hero-cal-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn-card-apple, .btn-apple-cal {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-gold);
+  color: var(--text-main);
+}
+.btn-card-apple:hover, .btn-apple-cal:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+/* Challenge Gallery Container */
+.challenge-gallery-container {
+  margin-top: 2.2rem;
+  padding-top: 1.8rem;
+  border-top: 1px solid rgba(28, 27, 26, 0.1);
+  text-align: center;
+}
+.challenge-gallery-heading {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-main);
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.challenge-gallery-sub {
+  font-size: 0.82rem;
+  color: var(--gold-dark);
+  font-weight: 600;
+  margin-bottom: 1.4rem;
+}
+
 /* ---------- 13. SPECIAL MOBILE OVERRIDES (< 480px) ---------- */
 @media (max-width: 480px) {
   .nav-links {

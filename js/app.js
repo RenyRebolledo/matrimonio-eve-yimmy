@@ -165,12 +165,17 @@ function initCountdown() {
 }
 
 /* ==========================================================================
-   2. GOOGLE CALENDAR INTEGRATION
+   2. CALENDAR INTEGRATIONS (Google Calendar & iPhone / Apple Calendar .ics)
    ========================================================================== */
 function initCalendarActions() {
   const googleBtns = [
     document.getElementById('btn-google-cal'),
     document.getElementById('btn-google-cal-hero')
+  ];
+
+  const appleBtns = [
+    document.getElementById('btn-apple-cal'),
+    document.getElementById('btn-apple-cal-hero')
   ];
 
   const title = encodeURIComponent("Matrimonio Evelyn López & Yimmy Salgado 💍");
@@ -179,6 +184,7 @@ function initCalendarActions() {
   const startIso = "20261121T143000Z";
   const endIso = "20261122T040000Z";
 
+  // Google Calendar
   googleBtns.forEach(btn => {
     if (btn) {
       btn.addEventListener('click', (e) => {
@@ -188,6 +194,45 @@ function initCalendarActions() {
       });
     }
   });
+
+  // Apple Calendar (.ics) for iPhone, iPad, Mac
+  appleBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        downloadAppleIcsCalendar();
+      });
+    }
+  });
+}
+
+function downloadAppleIcsCalendar() {
+  const icsData = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Evelyn & Yimmy//Matrimonio 2026//ES',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    'UID:boda-evelyn-yimmy-20261121@casapirque',
+    'SUMMARY:💍 Matrimonio Evelyn López & Yimmy Salgado',
+    'DESCRIPTION:¡Celebración de nuestro matrimonio en Casa Pirque! Dress Code: Campestre Elegante. Recuerda traer tu manta para el momento pasto 🧺🌿.',
+    'LOCATION:Casa Pirque, Pirque, Región Metropolitana, Chile',
+    'DTSTART:20261121T143000Z',
+    'DTEND:20261122T040000Z',
+    'STATUS:CONFIRMED',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', 'Matrimonio_Evelyn_y_Yimmy.ics');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 /* ==========================================================================
