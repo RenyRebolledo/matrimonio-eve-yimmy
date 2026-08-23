@@ -489,7 +489,7 @@
             <div class="title-divider"></div>
           </div>
 
-          <form class="rsvp-form" id="rsvp-form">
+          <form class="rsvp-form" id="rsvp-form" onsubmit="handleRsvpSubmit(event); return false;">
             <div class="form-group">
               <label for="rsvp-name">Tu Nombre y Apellido *</label>
               <input type="text" id="rsvp-name" name="name" placeholder="Ej.: Marcela González" required>
@@ -538,7 +538,7 @@
             </div>
 
             <div class="form-submit-row">
-              <button type="submit" class="btn-vogue-submit">
+              <button type="button" class="btn-vogue-submit" id="btn-submit-rsvp-action" onclick="handleRsvpSubmit(event)">
                 <i class="ri-check-double-line" style="font-size: 1.2rem;"></i>
                 <span>Confirmar Mi Asistencia</span>
               </button>
