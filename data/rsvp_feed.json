@@ -1,6 +1,14 @@
 {
   "invitations": [
     {
+      "id": "inv_mt6gmk53_9n8u",
+      "pases": 2,
+      "name1": "reny",
+      "name2": "Reny Rebolledo",
+      "phone": "+56997874977",
+      "createdAt": 1787529021303
+    },
+    {
       "id": "inv_mt6ggjua_g5db",
       "pases": 2,
       "name1": "reny",
