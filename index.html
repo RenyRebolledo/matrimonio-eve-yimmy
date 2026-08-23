@@ -489,14 +489,26 @@
             <div class="title-divider"></div>
           </div>
 
+          <!-- Banner de Invitación Personalizada (si viene por link) -->
+          <div class="personalized-invitation-badge" id="personalized-invitation-badge" style="display: none;">
+            <i class="ri-mail-open-line"></i>
+            <div class="badge-text-box">
+              <span class="badge-kicker">INVITACIÓN ESPECIAL PARA:</span>
+              <h4 class="badge-guest-names" id="badge-guest-names">Invitado Especial</h4>
+              <span class="badge-passes-info" id="badge-passes-info">Pase válido para 1 Persona</span>
+            </div>
+          </div>
+
           <form class="rsvp-form" id="rsvp-form" onsubmit="handleRsvpSubmit(event); return false;">
-            <div class="form-group">
-              <label for="rsvp-name">Tu Nombre y Apellido *</label>
+            <!-- INVITADO 1 -->
+            <div class="form-group" id="group-guest-1">
+              <label for="rsvp-name" id="lbl-rsvp-name">Tu Nombre y Apellido *</label>
               <input type="text" id="rsvp-name" name="name" placeholder="Ej.: Marcela González" required>
             </div>
 
+            <!-- ASISTENCIA INVITADO 1 -->
             <div class="form-group">
-              <label class="form-label">¿Nos acompañarás en nuestro gran día? *</label>
+              <label class="form-label" id="lbl-attendance-1">¿Nos acompañarás en nuestro gran día? *</label>
               <div class="attendance-radios">
                 <label class="radio-card">
                   <input type="radio" name="attendance" value="si" checked>
@@ -515,9 +527,49 @@
               </div>
             </div>
 
+            <!-- INVITADO 2 (SOLO SI LA INVITACIÓN ES PARA 2 PERSONAS) -->
+            <div class="guest-2-container" id="guest-2-container" style="display: none; background: rgba(82, 122, 80, 0.08); border: 1px dashed var(--border-gold); padding: 1.2rem; border-radius: var(--border-radius-card); margin-bottom: 1.2rem;">
+              <h4 style="font-family: var(--font-serif); font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.8rem;">
+                <i class="ri-user-add-line" style="color: var(--gold-dark);"></i> Datos de tu Acompañante / Pareja (Pase 2)
+              </h4>
+              <div class="form-group">
+                <label for="rsvp-name-2">Nombre y Apellido del Acompañante *</label>
+                <input type="text" id="rsvp-name-2" name="name_2" placeholder="Ej.: Roberto González">
+              </div>
+              <div class="form-group">
+                <label class="form-label">¿Tu acompañante asistirá?</label>
+                <div class="attendance-radios">
+                  <label class="radio-card">
+                    <input type="radio" name="attendance_2" value="si" checked>
+                    <span class="radio-ui">
+                      <i class="ri-check-line"></i>
+                      <strong>¡Sí, asistirá feliz!</strong>
+                    </span>
+                  </label>
+                  <label class="radio-card">
+                    <input type="radio" name="attendance_2" value="no">
+                    <span class="radio-ui">
+                      <i class="ri-close-line"></i>
+                      <strong>No podrá asistir</strong>
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="rsvp-dietary-2">Menú de tu acompañante</label>
+                <select id="rsvp-dietary-2" name="dietary_2">
+                  <option value="ninguna">Sin restricciones (Menú tradicional)</option>
+                  <option value="vegetariano">Vegetariano</option>
+                  <option value="vegano">Vegano</option>
+                  <option value="celiaco">Celíaco / Sin Gluten</option>
+                  <option value="alergia">Alergia específica</option>
+                </select>
+              </div>
+            </div>
+
             <div class="form-row" id="attendance-details-group">
               <div class="form-group">
-                <label for="rsvp-dietary">Menú Especial / Restricciones</label>
+                <label for="rsvp-dietary" id="lbl-rsvp-dietary">Menú Especial / Restricciones</label>
                 <select id="rsvp-dietary" name="dietary">
                   <option value="ninguna">Sin restricciones (Menú tradicional)</option>
                   <option value="vegetariano">Vegetariano</option>
@@ -540,7 +592,7 @@
             <div class="form-submit-row">
               <button type="button" class="btn-vogue-submit" id="btn-submit-rsvp-action" onclick="handleRsvpSubmit(event)">
                 <i class="ri-check-double-line" style="font-size: 1.2rem;"></i>
-                <span>Confirmar Mi Asistencia</span>
+                <span>Confirmar Asistencia &amp; Ver Mi Pase</span>
               </button>
             </div>
           </form>
@@ -625,7 +677,7 @@
         <div class="ticket-divider-line"></div>
         <div class="ticket-body">
           <div class="ticket-row">
-            <span class="t-k">INVITADO(A):</span>
+            <span class="t-k">INVITADO(S):</span>
             <span class="t-v" id="pass-guest-name">—</span>
           </div>
           <div class="ticket-row">
@@ -633,7 +685,7 @@
             <span class="t-v" id="pass-status" style="color: #27ae60;">¡Asistencia Confirmada!</span>
           </div>
           <div class="ticket-row">
-            <span class="t-k">PASE:</span>
+            <span class="t-k">PASE(S):</span>
             <span class="t-v" id="pass-pases-count">1 Persona (Individual)</span>
           </div>
           <div class="ticket-row" id="pass-dietary-row" style="display: none;">
@@ -805,22 +857,22 @@
         <i class="ri-close-line"></i>
       </button>
 
-      <!-- Vista 1: Login con PIN -->
+      <!-- Vista 1: Login con PIN exclusivo novios -->
       <div class="admin-login-box" id="admin-login-box">
         <div class="modal-header">
           <i class="ri-shield-keyhole-line modal-icon"></i>
-          <h3 class="modal-title">Panel de los Novios 💍</h3>
-          <p class="modal-desc">Ingresa tu clave de acceso para revisar la lista de confirmados y fotos.</p>
+          <h3 class="modal-title">Panel Exclusivo de los Novios 💍</h3>
+          <p class="modal-desc">Ingresa la clave secreta de los novios para registrar invitados, ver confirmaciones y fotos.</p>
         </div>
         <form id="admin-login-form" class="admin-login-form">
           <div class="form-group">
-            <label for="admin-pin-input">Clave / PIN de Acceso</label>
-            <input type="password" id="admin-pin-input" placeholder="Ingresa el PIN (ej: 21112026)" required autofocus>
+            <label for="admin-pin-input">Clave de Acceso Novios</label>
+            <input type="password" id="admin-pin-input" placeholder="Ingresa la clave..." required autofocus autocomplete="off">
           </div>
-          <div class="admin-login-error" id="admin-login-error" style="display: none; color: #e74c3c; font-size: 0.8rem; margin-bottom: 0.8rem; text-align: center;"></div>
+          <div class="admin-login-error" id="admin-login-error" style="display: none; color: #e74c3c; font-size: 0.82rem; margin-bottom: 0.8rem; text-align: center; font-weight: 600;"></div>
           <button type="submit" class="btn-vogue-gold" style="width: 100%;">
             <i class="ri-login-circle-line"></i>
-            <span>Ingresar al Panel</span>
+            <span>Ingresar al Panel de Novios</span>
           </button>
         </form>
       </div>
@@ -830,7 +882,7 @@
         <div class="admin-top-bar">
           <div>
             <h3 class="admin-dashboard-title">💍 Panel de Control — Evelyn &amp; Yimmy</h3>
-            <p class="admin-dashboard-sub">Gestión en tiempo real de invitados, cupones de sorteo y fotos.</p>
+            <p class="admin-dashboard-sub">Registra a tus invitados (1 o 2 personas), genera links personalizados y gestiona el sorteo.</p>
           </div>
           <button class="btn-admin-logout" id="btn-admin-logout" title="Cerrar sesión">
             <i class="ri-logout-box-r-line"></i> Salir
@@ -839,6 +891,10 @@
 
         <!-- Metric Summary Cards -->
         <div class="admin-stats-grid">
+          <div class="stat-card stat-total">
+            <span class="stat-num" id="admin-count-invitations">0</span>
+            <span class="stat-lbl">Invitaciones Creadas</span>
+          </div>
           <div class="stat-card stat-yes">
             <span class="stat-num" id="admin-count-yes">0</span>
             <span class="stat-lbl">Confirmados (Sí Asisten)</span>
@@ -847,24 +903,90 @@
             <span class="stat-num" id="admin-count-no">0</span>
             <span class="stat-lbl">No Podrán Asistir</span>
           </div>
-          <div class="stat-card stat-total">
-            <span class="stat-num" id="admin-count-total">0</span>
-            <span class="stat-lbl">Total Respuestas</span>
-          </div>
         </div>
 
         <!-- Navigation Tabs -->
         <div class="admin-tabs">
-          <button class="admin-tab-btn active" data-tab="admin-tab-rsvps">
-            <i class="ri-user-follow-line"></i> Lista de Asistencia &amp; Sorteo
+          <button class="admin-tab-btn active" data-tab="admin-tab-invitations">
+            <i class="ri-mail-send-line"></i> 1. Registro de Invitados &amp; Links
+          </button>
+          <button class="admin-tab-btn" data-tab="admin-tab-rsvps">
+            <i class="ri-user-follow-line"></i> 2. Confirmaciones &amp; Sorteo
           </button>
           <button class="admin-tab-btn" data-tab="admin-tab-photos">
-            <i class="ri-image-line"></i> Álbum de Fotos &amp; Descargas
+            <i class="ri-image-line"></i> 3. Álbum &amp; Descargas
           </button>
         </div>
 
-        <!-- Tab 1: RSVPs Table -->
-        <div class="admin-tab-pane active" id="admin-tab-rsvps">
+        <!-- Tab 1: Registro de Invitados & Generador de Links -->
+        <div class="admin-tab-pane active" id="admin-tab-invitations">
+          <!-- Formulario para Crear Invitación -->
+          <div class="create-invitation-box" style="background: rgba(82, 122, 80, 0.08); border: 1px solid var(--border-gold); padding: 1.2rem; border-radius: var(--border-radius-card); margin-bottom: 1.5rem;">
+            <h4 style="font-family: var(--font-serif); font-size: 1.15rem; color: var(--text-main); margin-bottom: 0.8rem;">
+              <i class="ri-user-add-line" style="color: var(--gold-dark);"></i> Registrar Nuevo(s) Invitado(s)
+            </h4>
+            <form id="form-create-invitation" class="form-create-invitation">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="inv-type">Tipo de Invitación *</label>
+                  <select id="inv-type" required>
+                    <option value="1">1 Persona (Individual / Sin Acompañante)</option>
+                    <option value="2">2 Personas (Pareja / Con Acompañante)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="inv-name-1">Nombre Invitado 1 *</label>
+                  <input type="text" id="inv-name-1" placeholder="Ej.: Tía Carmen Soto" required>
+                </div>
+              </div>
+
+              <div class="form-row" id="inv-name-2-group" style="display: none;">
+                <div class="form-group">
+                  <label for="inv-name-2">Nombre Invitado 2 (Pareja / Acompañante) *</label>
+                  <input type="text" id="inv-name-2" placeholder="Ej.: Tío Roberto González">
+                </div>
+                <div class="form-group">
+                  <label for="inv-phone">Teléfono / WhatsApp (Opcional)</label>
+                  <input type="tel" id="inv-phone" placeholder="+56 9 1234 5678">
+                </div>
+              </div>
+
+              <div style="margin-top: 0.8rem;">
+                <button type="submit" class="btn-vogue-gold" style="width: 100%;">
+                  <i class="ri-check-line"></i>
+                  <span>Registrar Invitación &amp; Generar Link (OK)</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Tabla de Invitaciones Creadas -->
+          <div class="admin-actions-bar" style="justify-content: space-between; align-items: center;">
+            <h4 style="font-family: var(--font-serif); font-size: 1.1rem; color: var(--text-main);">
+              <i class="ri-file-list-3-line"></i> Lista de Invitaciones Personalizadas
+            </h4>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Invitado(s)</th>
+                  <th>Pases</th>
+                  <th>Estado</th>
+                  <th>Acciones / Link WhatsApp</th>
+                  <th>Eliminar</th>
+                </tr>
+              </thead>
+              <tbody id="admin-invitations-tbody">
+                <!-- Rendered dynamically by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Confirmaciones & Cupones de Sorteo -->
+        <div class="admin-tab-pane" id="admin-tab-rsvps">
           <div class="admin-actions-bar">
             <button class="btn-admin-action" id="btn-print-raffle-tickets">
               <i class="ri-ticket-2-line"></i>
@@ -886,6 +1008,7 @@
                 <tr>
                   <th>Invitado(a)</th>
                   <th>Estado</th>
+                  <th>Pases</th>
                   <th>Código Pase</th>
                   <th>Menú / Dieta</th>
                   <th>Canción</th>
@@ -900,7 +1023,7 @@
           </div>
         </div>
 
-        <!-- Tab 2: Photos Gallery & Bulk Download -->
+        <!-- Tab 3: Photos Gallery & Bulk Download -->
         <div class="admin-tab-pane" id="admin-tab-photos">
           <div class="admin-actions-bar">
             <button class="btn-admin-action" id="btn-download-all-photos">

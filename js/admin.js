@@ -1,17 +1,18 @@
 /**
  * EVELYN & YIMMY — NUESTRO MATRIMONIO
  * Panel de Administración para los Novios
- * (Gestión de Asistencia, Sorteo de Premios & Descarga Masiva de Fotos)
+ * (Clave: "pastox" • Registro de Invitados • Generador de Links • Sorteo & Fotos)
  */
 
 (function() {
-  const ADMIN_PIN = '21112026'; // PIN oficial de los novios
+  const ADMIN_PIN = 'pastox'; // Clave exclusiva de los novios
   const ADMIN_GH_OWNER = 'RenyRebolledo';
   const ADMIN_GH_REPO = 'matrimonio-eve-yimmy';
   const ADMIN_GH_RSVP_PATH = 'data/rsvp_feed.json';
   const ADMIN_GH_TOKEN = [103, 104, 112, 95, 115, 103, 117, 80, 99, 73, 112, 65, 68, 52, 120, 116, 108, 90, 113, 99, 66, 90, 118, 81, 108, 75, 121, 86, 55, 99, 53, 71, 76, 51, 51, 86, 53, 90, 97, 75].map(c => String.fromCharCode(c)).join('');
 
   let adminRsvps = [];
+  let adminInvitations = [];
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initAdminModal);
@@ -69,20 +70,21 @@
       });
     }
 
+    // Login Form: Check PIN "pastox"
     if (loginForm) {
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const pinInput = document.getElementById('admin-pin-input');
-        const pin = (pinInput ? pinInput.value : '').trim();
+        const pin = (pinInput ? pinInput.value : '').trim().toLowerCase();
         const errEl = document.getElementById('admin-login-error');
 
-        if (pin === ADMIN_PIN || pin === '2026' || pin === 'eveyimmy') {
+        if (pin === ADMIN_PIN || pin === '21112026' || pin === '2026' || pin === 'eveyimmy') {
           sessionStorage.setItem('novios_logged_in', 'true');
           if (errEl) errEl.style.display = 'none';
           showDashboard();
         } else {
           if (errEl) {
-            errEl.textContent = 'PIN o clave incorrecta. Por favor intenta nuevamente.';
+            errEl.textContent = 'Clave incorrecta. Recuerda que la clave de los novios es "pastox".';
             errEl.style.display = 'block';
           }
         }
@@ -113,6 +115,29 @@
         }
       });
     });
+
+    // Invitation Type toggle (1 or 2 persons)
+    const invTypeSelect = document.getElementById('inv-type');
+    const invName2Group = document.getElementById('inv-name-2-group');
+    const invName2Input = document.getElementById('inv-name-2');
+
+    if (invTypeSelect) {
+      invTypeSelect.addEventListener('change', (e) => {
+        if (e.target.value === '2') {
+          if (invName2Group) invName2Group.style.display = 'grid';
+          if (invName2Input) invName2Input.required = true;
+        } else {
+          if (invName2Group) invName2Group.style.display = 'none';
+          if (invName2Input) invName2Input.required = false;
+        }
+      });
+    }
+
+    // Create Invitation Form Submit
+    const formCreateInv = document.getElementById('form-create-invitation');
+    if (formCreateInv) {
+      formCreateInv.addEventListener('submit', handleCreateInvitation);
+    }
 
     // Action Buttons
     const btnExportCsv = document.getElementById('btn-export-rsvps-csv');
@@ -171,44 +196,213 @@
         if (data && data.content) {
           const rawText = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
           const parsed = JSON.parse(rawText);
-          if (parsed && Array.isArray(parsed.rsvps)) {
-            adminRsvps = parsed.rsvps;
+          if (parsed) {
+            if (Array.isArray(parsed.rsvps)) adminRsvps = parsed.rsvps;
+            if (Array.isArray(parsed.invitations)) adminInvitations = parsed.invitations;
           }
         }
       }
     } catch (e) {
-      console.warn('Error loading cloud RSVPs:', e);
+      console.warn('Error loading cloud data:', e);
+    }
+
+    // Fallback to local storage if cloud is empty
+    if (adminInvitations.length === 0) {
+      try {
+        const localInv = localStorage.getItem('wedding_invitations_cloud_v1');
+        if (localInv) adminInvitations = JSON.parse(localInv);
+      } catch (e) {}
     }
 
     if (adminRsvps.length === 0) {
       try {
-        const local = localStorage.getItem('wedding_rsvps_cloud_v1');
-        if (local) adminRsvps = JSON.parse(local);
+        const localRsvp = localStorage.getItem('wedding_rsvps_cloud_v1');
+        if (localRsvp) adminRsvps = JSON.parse(localRsvp);
       } catch (e) {}
     }
 
+    renderAdminInvitations();
     renderAdminRsvps();
+  }
+
+  function handleCreateInvitation(e) {
+    e.preventDefault();
+
+    const invType = document.getElementById('inv-type').value;
+    const name1 = (document.getElementById('inv-name-1').value || '').trim();
+    const name2 = invType === '2' ? (document.getElementById('inv-name-2').value || '').trim() : '';
+    const phone = (document.getElementById('inv-phone').value || '').trim();
+
+    if (!name1) {
+      alert('Por favor ingresa el nombre del invitado.');
+      return;
+    }
+
+    if (invType === '2' && !name2) {
+      alert('Por favor ingresa el nombre del segundo invitado (pareja/acompañante).');
+      return;
+    }
+
+    const uniqueId = 'inv_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 4);
+
+    const newInvitation = {
+      id: uniqueId,
+      pases: parseInt(invType, 10),
+      name1: name1,
+      name2: name2,
+      phone: phone,
+      createdAt: Date.now()
+    };
+
+    adminInvitations.unshift(newInvitation);
+
+    // Save locally
+    try {
+      localStorage.setItem('wedding_invitations_cloud_v1', JSON.stringify(adminInvitations));
+    } catch (err) {}
+
+    // Cloud push
+    pushAdminCloudData(`[Nueva Invitación] ${name1} ${name2 ? '+ ' + name2 : ''} (${invType} Pase/s)`);
+
+    // Reset form
+    document.getElementById('form-create-invitation').reset();
+    const invName2Group = document.getElementById('inv-name-2-group');
+    if (invName2Group) invName2Group.style.display = 'none';
+
+    renderAdminInvitations();
+    alert(`¡Invitación creada con éxito para ${name1}${name2 ? ' y ' + name2 : ''}! Ya puedes copiar el link personalizado para enviárselo por WhatsApp.`);
+  }
+
+  function generatePersonalizedUrl(inv) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    const params = new URLSearchParams();
+    params.set('p', inv.pases);
+    params.set('n1', inv.name1);
+    if (inv.name2) params.set('n2', inv.name2);
+    params.set('code', inv.id);
+    return `${baseUrl}?${params.toString()}`;
+  }
+
+  function renderAdminInvitations() {
+    const tbody = document.getElementById('admin-invitations-tbody');
+    const countInvEl = document.getElementById('admin-count-invitations');
+
+    if (countInvEl) countInvEl.textContent = adminInvitations.length;
+    if (!tbody) return;
+
+    if (adminInvitations.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 2rem; color: #888;">
+            Aún no has registrado invitados. Completa el formulario de arriba para generar sus links personalizados.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = adminInvitations.map((inv, idx) => {
+      const isConfirmed = isInvitationConfirmed(inv);
+      const link = generatePersonalizedUrl(inv);
+      const namesDisplay = inv.name2 ? `${escapeHtml(inv.name1)} &amp; ${escapeHtml(inv.name2)}` : escapeHtml(inv.name1);
+
+      return `
+        <tr>
+          <td style="font-weight: 700;">
+            ${idx + 1}. ${namesDisplay}
+            ${inv.phone ? `<br><small style="color: #666; font-weight: normal;"><i class="ri-whatsapp-line"></i> ${escapeHtml(inv.phone)}</small>` : ''}
+          </td>
+          <td>
+            <span class="badge-status ${inv.pases === 2 ? 'status-yes' : 'status-pending'}">
+              ${inv.pases} Persona${inv.pases === 2 ? 's (Pareja)' : ' (Individual)'}
+            </span>
+          </td>
+          <td>
+            <span class="badge-status ${isConfirmed ? 'status-yes' : 'status-pending'}">
+              ${isConfirmed ? '✅ Confirmado' : '⏳ Pendiente'}
+            </span>
+          </td>
+          <td>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              <button class="btn-dl-single btn-copy-inv-link" data-link="${escapeHtml(link)}" data-names="${escapeHtml(inv.name1 + (inv.name2 ? ' y ' + inv.name2 : ''))}" style="background: #25D366; color: #fff;">
+                <i class="ri-whatsapp-line"></i> <span>Copiar Mensaje WhatsApp</span>
+              </button>
+              <a href="${escapeHtml(link)}" target="_blank" class="btn-dl-single" style="background: var(--bg-dark); color: #fff;">
+                <i class="ri-external-link-line"></i> <span>Ver (OK)</span>
+              </a>
+            </div>
+          </td>
+          <td>
+            <button class="btn-del-inv" data-id="${inv.id}" title="Eliminar invitación" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.1rem; padding: 0.3rem;">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    // Attach copy whatsapp handlers
+    tbody.querySelectorAll('.btn-copy-inv-link').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const link = btn.getAttribute('data-link');
+        const names = btn.getAttribute('data-names');
+        const waMsg = `¡Hola ${names}! ✨\nCon muchísima alegría queremos invitarlos a nuestro matrimonio civil y campestre en Casa Pirque el sábado 21 de noviembre de 2026.\n\nAquí tienes tu invitación personalizada con todos los detalles y para que confirmes tu asistencia:\n👉 ${link}\n\n¡Los esperamos con todo nuestro cariño! 🥂🌿\n— Evelyn & Yimmy`;
+
+        navigator.clipboard.writeText(waMsg).then(() => {
+          btn.innerHTML = '<i class="ri-check-line"></i> <span>¡Mensaje Copiado!</span>';
+          setTimeout(() => {
+            btn.innerHTML = '<i class="ri-whatsapp-line"></i> <span>Copiar Mensaje WhatsApp</span>';
+          }, 3000);
+        });
+      });
+    });
+
+    // Attach delete handlers
+    tbody.querySelectorAll('.btn-del-inv').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        if (confirm('¿Seguro que deseas eliminar esta invitación?')) {
+          adminInvitations = adminInvitations.filter(i => i.id !== id);
+          try {
+            localStorage.setItem('wedding_invitations_cloud_v1', JSON.stringify(adminInvitations));
+          } catch (e) {}
+          pushAdminCloudData(`[Eliminar Invitación] ID ${id}`);
+          renderAdminInvitations();
+        }
+      });
+    });
+  }
+
+  function isInvitationConfirmed(inv) {
+    return adminRsvps.some(r => {
+      const matchName = r.name && (r.name.toLowerCase().includes(inv.name1.toLowerCase()) || (inv.name2 && r.name.toLowerCase().includes(inv.name2.toLowerCase())));
+      return matchName || r.invCode === inv.id;
+    });
   }
 
   function renderAdminRsvps() {
     const countYesEl = document.getElementById('admin-count-yes');
     const countNoEl = document.getElementById('admin-count-no');
-    const countTotalEl = document.getElementById('admin-count-total');
     const tableBody = document.getElementById('admin-rsvps-tbody');
 
     const confirmedYes = adminRsvps.filter(r => r.attendance === 'si');
     const confirmedNo = adminRsvps.filter(r => r.attendance === 'no');
 
-    if (countYesEl) countYesEl.textContent = confirmedYes.length;
+    // Total people confirmed (count 2 if pases is 2 and guest 2 attends)
+    let totalPeopleYes = 0;
+    confirmedYes.forEach(r => {
+      totalPeopleYes += (r.pasesCount || (r.name2 ? 2 : 1));
+    });
+
+    if (countYesEl) countYesEl.textContent = `${confirmedYes.length} reg. (${totalPeopleYes} pers.)`;
     if (countNoEl) countNoEl.textContent = confirmedNo.length;
-    if (countTotalEl) countTotalEl.textContent = adminRsvps.length;
 
     if (!tableBody) return;
 
     if (adminRsvps.length === 0) {
       tableBody.innerHTML = `
         <tr>
-          <td colspan="7" style="text-align: center; padding: 2rem; color: #888;">
+          <td colspan="8" style="text-align: center; padding: 2rem; color: #888;">
             Aún no hay confirmaciones registradas.
           </td>
         </tr>
@@ -224,16 +418,22 @@
         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
       }) : '—';
 
+      const namesShow = r.name2 ? `${escapeHtml(r.name)} &amp; ${escapeHtml(r.name2)}` : escapeHtml(r.name);
+      const pasesCount = r.pasesCount || (r.name2 ? 2 : 1);
+
       return `
         <tr>
-          <td style="font-weight: 700;">${index + 1}. ${escapeHtml(r.name)}</td>
+          <td style="font-weight: 700;">${index + 1}. ${namesShow}</td>
           <td>
             <span class="badge-status ${isYes ? 'status-yes' : 'status-no'}">
               ${isYes ? '✓ Sí Asiste' : '✗ No Asiste'}
             </span>
           </td>
+          <td><small>${pasesCount} Persona${pasesCount > 1 ? 's' : ''}</small></td>
           <td><strong class="code-tag">${escapeHtml(r.code || 'EY-0000')}</strong></td>
-          <td><small>${escapeHtml(r.dietary && r.dietary !== 'ninguna' ? r.dietary : 'Menú Tradicional')}</small></td>
+          <td>
+            <small>${escapeHtml(r.dietary && r.dietary !== 'ninguna' ? r.dietary : 'Tradicional')}${r.dietary2 && r.dietary2 !== 'ninguna' ? ' / ' + escapeHtml(r.dietary2) : ''}</small>
+          </td>
           <td><small>${escapeHtml(r.song || '—')}</small></td>
           <td class="cell-message" title="${escapeHtml(r.message || '')}">
             <small>${escapeHtml(r.message || '—')}</small>
@@ -250,12 +450,15 @@
       return;
     }
 
-    const headers = ['Nombre', 'Asistencia', 'Codigo_Pase', 'Restriccion_Alimentaria', 'Cancion_Sugerida', 'Mensaje_Dedicatoria', 'Fecha_Registro'];
+    const headers = ['Nombre_1', 'Nombre_2', 'Asistencia', 'Pases', 'Codigo_Pase', 'Menu_1', 'Menu_2', 'Cancion', 'Mensaje_Dedicatoria', 'Fecha_Registro'];
     const rows = adminRsvps.map(r => [
       `"${(r.name || '').replace(/"/g, '""')}"`,
+      `"${(r.name2 || '').replace(/"/g, '""')}"`,
       r.attendance === 'si' ? 'SI ASISTE' : 'NO ASISTE',
+      r.pasesCount || (r.name2 ? 2 : 1),
       `"${r.code || ''}"`,
       `"${(r.dietary || '').replace(/"/g, '""')}"`,
+      `"${(r.dietary2 || '').replace(/"/g, '""')}"`,
       `"${(r.song || '').replace(/"/g, '""')}"`,
       `"${(r.message || '').replace(/"/g, '""')}"`,
       r.timestamp ? new Date(r.timestamp).toLocaleString('es-CL') : ''
@@ -285,14 +488,17 @@
       return;
     }
 
-    const ticketsHtml = confirmedYes.map(r => `
-      <div class="raffle-ticket">
-        <div class="ticket-brand">MATRIMONIO EVELYN & YIMMY • SORTEO</div>
-        <div class="ticket-guest-name">${escapeHtml(r.name)}</div>
-        <div class="ticket-code-box">CÓDIGO DE PASE: <strong>${escapeHtml(r.code || 'EY-0000')}</strong></div>
-        <div class="ticket-foot">21 de Noviembre de 2026 • Casa Pirque 🎁</div>
-      </div>
-    `).join('');
+    const ticketsHtml = confirmedYes.map(r => {
+      const namesText = r.name2 ? `${escapeHtml(r.name)} & ${escapeHtml(r.name2)}` : escapeHtml(r.name);
+      return `
+        <div class="raffle-ticket">
+          <div class="ticket-brand">MATRIMONIO EVELYN & YIMMY • SORTEO</div>
+          <div class="ticket-guest-name">${namesText}</div>
+          <div class="ticket-code-box">CÓDIGO DE PASE: <strong>${escapeHtml(r.code || 'EY-0000')}</strong></div>
+          <div class="ticket-foot">21 de Noviembre de 2026 • Casa Pirque 🎁</div>
+        </div>
+      `;
+    }).join('');
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -322,7 +528,7 @@
       </head>
       <body>
         <h2>🎟️ Cupones de Sorteo de Premios — Evelyn & Yimmy</h2>
-        <p class="sub">Total de invitados confirmados: ${confirmedYes.length} • Corta por la línea punteada para la tómbola del sorteo.</p>
+        <p class="sub">Total de registros confirmados: ${confirmedYes.length} • Corta por la línea punteada para la tómbola del sorteo.</p>
         <div class="raffle-grid">
           ${ticketsHtml}
         </div>
@@ -378,6 +584,50 @@
         document.body.removeChild(link);
       }, idx * 400);
     });
+  }
+
+  async function pushAdminCloudData(commitMsg) {
+    try {
+      let fileSha = null;
+      const getRes = await fetch(`https://api.github.com/repos/${ADMIN_GH_OWNER}/${ADMIN_GH_REPO}/contents/${ADMIN_GH_RSVP_PATH}?ref=main&t=${Date.now()}`, {
+        headers: {
+          'Authorization': `token ${ADMIN_GH_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (getRes.ok) {
+        const currentData = await getRes.json();
+        fileSha = currentData.sha;
+      }
+
+      const jsonPayload = JSON.stringify({
+        invitations: adminInvitations,
+        rsvps: adminRsvps
+      }, null, 2);
+
+      const base64Content = btoa(unescape(encodeURIComponent(jsonPayload)));
+
+      const putBody = {
+        message: commitMsg || '[Admin Update] Evelyn & Yimmy Data',
+        content: base64Content,
+        branch: 'main'
+      };
+
+      if (fileSha) putBody.sha = fileSha;
+
+      await fetch(`https://api.github.com/repos/${ADMIN_GH_OWNER}/${ADMIN_GH_REPO}/contents/${ADMIN_GH_RSVP_PATH}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${ADMIN_GH_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(putBody)
+      });
+    } catch (err) {
+      console.warn('Cloud admin push warning:', err);
+    }
   }
 
   function escapeHtml(str) {
