@@ -55,6 +55,21 @@ function initRsvpModule() {
     });
   }
 
+  const copyCodeBtn = document.getElementById('btn-copy-pass-code');
+  if (copyCodeBtn) {
+    copyCodeBtn.addEventListener('click', () => {
+      const code = document.getElementById('pass-code').textContent || '';
+      if (code) {
+        navigator.clipboard.writeText(code).then(() => {
+          copyCodeBtn.innerHTML = '<i class="ri-check-line"></i> <span>¡Código Copiado!</span>';
+          setTimeout(() => {
+            copyCodeBtn.innerHTML = '<i class="ri-file-copy-line"></i> <span>Copiar Mi Código</span>';
+          }, 3000);
+        });
+      }
+    });
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -89,7 +104,7 @@ function initRsvpModule() {
       timestamp: Date.now()
     };
 
-    // 1. Save to LocalStorage cache
+    // 1. Save to LocalStorage cache immediately
     try {
       const stored = JSON.parse(localStorage.getItem('wedding_rsvps_cloud_v1') || '[]');
       stored.unshift(newRsvp);
@@ -97,17 +112,15 @@ function initRsvpModule() {
       localStorage.setItem('wedding_guest_name', name);
     } catch (err) {}
 
-    // 2. Push to GitHub Cloud Database (data/rsvp_feed.json)
-    await pushRsvpToCloud(newRsvp);
-
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = originalText;
-
+    // 2. Open Digital Pass Modal IMMEDIATELY (no blocking)
     if (attendance === 'si') {
-      // Populate Digital Pass
-      document.getElementById('pass-guest-name').textContent = name;
-      document.getElementById('pass-pases-count').textContent = '1 Persona (Individual)';
-      document.getElementById('pass-code').textContent = reservationCode;
+      const guestNameEl = document.getElementById('pass-guest-name');
+      const passCountEl = document.getElementById('pass-pases-count');
+      const passCodeEl = document.getElementById('pass-code');
+
+      if (guestNameEl) guestNameEl.textContent = name;
+      if (passCountEl) passCountEl.textContent = '1 Persona (Individual)';
+      if (passCodeEl) passCodeEl.textContent = reservationCode;
 
       if (passModal) {
         passModal.classList.add('active');
@@ -118,6 +131,14 @@ function initRsvpModule() {
       alert(`¡Muchas gracias, ${name}! Hemos registrado tu respuesta. Te mandamos un abrazo gigante.`);
       form.reset();
     }
+
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
+
+    // 3. Asynchronously push to Cloud Database (data/rsvp_feed.json)
+    pushRsvpToCloud(newRsvp).catch(err => {
+      console.warn('Background RSVP cloud sync notice:', err);
+    });
   });
 }
 
