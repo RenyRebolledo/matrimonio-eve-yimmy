@@ -234,12 +234,12 @@
     const phone = (document.getElementById('inv-phone').value || '').trim();
 
     if (!name1) {
-      alert('Por favor ingresa el nombre del invitado.');
+      alert('Por favor ingresa el nombre del primer invitado.');
       return;
     }
 
     if (invType === '2' && !name2) {
-      alert('Por favor ingresa el nombre del segundo invitado (pareja/acompañante).');
+      alert('Por favor ingresa el nombre del segundo invitado (acompañante).');
       return;
     }
 
@@ -314,7 +314,7 @@
           </td>
           <td>
             <span class="badge-status ${inv.pases === 2 ? 'status-yes' : 'status-pending'}">
-              ${inv.pases} Persona${inv.pases === 2 ? 's (Pareja)' : ' (Individual)'}
+              ${inv.pases} Persona${inv.pases === 2 ? 's (Con Acompañante)' : ' (Individual)'}
             </span>
           </td>
           <td>
@@ -324,7 +324,7 @@
           </td>
           <td>
             <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-              <button class="btn-dl-single btn-copy-inv-link" data-link="${escapeHtml(link)}" data-names="${escapeHtml(inv.name1 + (inv.name2 ? ' y ' + inv.name2 : ''))}" style="background: #25D366; color: #fff;">
+              <button class="btn-dl-single btn-copy-inv-link" data-link="${escapeHtml(link)}" data-n1="${escapeHtml(inv.name1)}" data-n2="${escapeHtml(inv.name2 || '')}" style="background: #25D366; color: #fff;">
                 <i class="ri-whatsapp-line"></i> <span>Copiar Mensaje WhatsApp</span>
               </button>
               <a href="${escapeHtml(link)}" target="_blank" class="btn-dl-single" style="background: var(--bg-dark); color: #fff;">
@@ -345,8 +345,15 @@
     tbody.querySelectorAll('.btn-copy-inv-link').forEach(btn => {
       btn.addEventListener('click', () => {
         const link = btn.getAttribute('data-link');
-        const names = btn.getAttribute('data-names');
-        const waMsg = `¡Hola ${names}! ✨\nCon muchísima alegría queremos invitarlos a nuestro matrimonio civil y campestre en Casa Pirque el sábado 21 de noviembre de 2026.\n\nAquí tienes tu invitación personalizada con todos los detalles y para que confirmes tu asistencia:\n👉 ${link}\n\n¡Los esperamos con todo nuestro cariño! 🥂🌿\n— Evelyn & Yimmy`;
+        const n1 = btn.getAttribute('data-n1');
+        const n2 = btn.getAttribute('data-n2');
+
+        const isPlural = !!n2;
+        const greeting = isPlural ? `¡Hola ${n1} y ${n2}! ✨` : `¡Hola ${n1}! ✨`;
+        const verb = isPlural ? 'invitarlos' : 'invitarte';
+        const waitVerb = isPlural ? '¡Los esperamos con todo nuestro cariño! 🥂🌿' : '¡Te esperamos con todo nuestro cariño! 🥂🌿';
+
+        const waMsg = `${greeting}\nCon muchísima alegría queremos ${verb} a nuestro matrimonio en Casa Pirque el sábado 21 de noviembre de 2026.\n\nAquí tienes tu invitación con todos los detalles para que confirmes tu asistencia:\n👉 ${link}\n\n${waitVerb}\n— Evelyn & Yimmy`;
 
         navigator.clipboard.writeText(waMsg).then(() => {
           btn.innerHTML = '<i class="ri-check-line"></i> <span>¡Mensaje Copiado!</span>';

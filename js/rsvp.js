@@ -1,7 +1,8 @@
 /**
  * EVELYN & YIMMY — NUESTRO MATRIMONIO
  * Módulo de Confirmación de Asistencia (RSVP)
- * Soporte para Invitaciones Personalizadas (1 o 2 Pases) + Pase Digital + Sincronización en la Nube
+ * Soporte para Invitaciones Personalizadas con bloques individuales por invitado, 
+ * canciones individuales, dedicatoria compartida y pase de entrada oficial.
  */
 
 (function() {
@@ -24,21 +25,30 @@
     const closePassBtn = document.getElementById('btn-close-pass-modal');
     const printPassBtn = document.getElementById('btn-print-pass');
     const copyCodeBtn = document.getElementById('btn-copy-pass-code');
-    const attendanceDetails = document.getElementById('attendance-details-group');
+    const attendanceDetails1 = document.getElementById('attendance-details-group');
+    const attendanceDetails2 = document.getElementById('attendance-details-group-2');
 
     // 1. Check for URL parameters (?p=2&n1=...&n2=...&code=...)
     checkUrlInvitationParams();
 
     if (!form) return;
 
-    // Toggle dietary / song details when Guest 1 says Yes/No
-    const radios = form.querySelectorAll('input[name="attendance"]');
-    radios.forEach(radio => {
+    // Toggle details for Guest 1 when Yes/No
+    const radios1 = form.querySelectorAll('input[name="attendance"]');
+    radios1.forEach(radio => {
       radio.addEventListener('change', (e) => {
-        if (e.target.value === 'no') {
-          if (attendanceDetails) attendanceDetails.style.display = 'none';
-        } else {
-          if (attendanceDetails) attendanceDetails.style.display = 'grid';
+        if (attendanceDetails1) {
+          attendanceDetails1.style.display = e.target.value === 'no' ? 'none' : 'grid';
+        }
+      });
+    });
+
+    // Toggle details for Guest 2 when Yes/No
+    const radios2 = form.querySelectorAll('input[name="attendance_2"]');
+    radios2.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (attendanceDetails2) {
+          attendanceDetails2.style.display = e.target.value === 'no' ? 'none' : 'grid';
         }
       });
     });
@@ -113,28 +123,41 @@
     if (badge && badgeNames) {
       badgeNames.textContent = name2 ? `${name1} & ${name2}` : name1;
       if (badgeInfo) {
-        badgeInfo.textContent = pases === 2 ? '✨ Pase especial reservado para 2 Personas (Pareja)' : '✨ Pase individual reservado para 1 Persona';
+        badgeInfo.textContent = pases === 2 ? '✨ Pase especial reservado para 2 Personas' : '✨ Pase individual reservado para 1 Persona';
       }
       badge.style.display = 'flex';
     }
 
     // Pre-fill Name 1
     const nameInput1 = document.getElementById('rsvp-name');
-    if (nameInput1) {
-      nameInput1.value = name1;
-    }
+    const heading1 = document.getElementById('heading-guest-1');
+    const lblName1 = document.getElementById('lbl-rsvp-name');
+    const lblAtt1 = document.getElementById('lbl-attendance-1');
+    const lblSong1 = document.getElementById('lbl-rsvp-song');
+
+    if (nameInput1) nameInput1.value = name1;
+    if (heading1) heading1.textContent = `Primer Invitado: ${name1}`;
+    if (lblName1) lblName1.textContent = `Nombre y Apellido (Invitado 1: ${name1}) *`;
+    if (lblAtt1) lblAtt1.textContent = `¿Tú (${name1}) nos acompañarás? *`;
+    if (lblSong1) lblSong1.textContent = `Canción que sugiere ${name1}`;
 
     // If 2 passes, show and pre-fill Guest 2 container
     if (pases === 2) {
       const g2Container = document.getElementById('guest-2-container');
       const nameInput2 = document.getElementById('rsvp-name-2');
-      const lblName1 = document.getElementById('lbl-rsvp-name');
-      const lblAtt1 = document.getElementById('lbl-attendance-1');
+      const heading2 = document.getElementById('heading-guest-2');
+      const lblName2 = document.getElementById('lbl-rsvp-name-2');
+      const lblAtt2 = document.getElementById('lbl-attendance-2');
+      const lblSong2 = document.querySelector('label[for="rsvp-song-2"]');
+      const lblMessage = document.getElementById('lbl-rsvp-message');
 
       if (g2Container) g2Container.style.display = 'block';
       if (nameInput2 && name2) nameInput2.value = name2;
-      if (lblName1) lblName1.textContent = `Tu Nombre y Apellido (Pase 1: ${name1}) *`;
-      if (lblAtt1) lblAtt1.textContent = `¿Tú (${name1}) nos acompañarás? *`;
+      if (heading2) heading2.textContent = name2 ? `Segundo Invitado: ${name2}` : 'Segundo Invitado (Acompañante)';
+      if (lblName2) lblName2.textContent = name2 ? `Nombre y Apellido (Invitado 2: ${name2}) *` : 'Nombre y Apellido del Acompañante *';
+      if (lblAtt2) lblAtt2.textContent = name2 ? `¿Tú (${name2}) nos acompañarás?` : '¿Tu acompañante asistirá?';
+      if (lblSong2) lblSong2.textContent = name2 ? `Canción que sugiere ${name2}` : 'Canción que sugiere tu acompañante';
+      if (lblMessage) lblMessage.textContent = name2 ? `Un mensaje o dedicatoria para nosotros (de parte de ${name1} y ${name2})` : 'Un mensaje o dedicatoria para nosotros (de parte de ustedes)';
     }
   }
 
@@ -146,19 +169,15 @@
     const passModal = document.getElementById('guest-pass-modal');
     if (!form) return false;
 
+    // Guest 1 data
     const nameInput = document.getElementById('rsvp-name');
     const name1 = (nameInput ? nameInput.value : '').trim();
     const attendanceRadio1 = form.querySelector('input[name="attendance"]:checked');
     const attendance1 = attendanceRadio1 ? attendanceRadio1.value : 'si';
-    
     const dietarySelect1 = document.getElementById('rsvp-dietary');
     const dietary1 = dietarySelect1 ? dietarySelect1.value : 'ninguna';
-    
-    const songInput = document.getElementById('rsvp-song');
-    const song = (songInput ? songInput.value : '').trim();
-    
-    const messageInput = document.getElementById('rsvp-message');
-    const message = (messageInput ? messageInput.value : '').trim();
+    const songInput1 = document.getElementById('rsvp-song');
+    const song1 = (songInput1 ? songInput1.value : '').trim();
 
     // Guest 2 data (if 2 passes)
     const isTwoPasses = invitationData && invitationData.pases === 2;
@@ -168,6 +187,12 @@
     const attendance2 = isTwoPasses && attendanceRadio2 ? attendanceRadio2.value : 'no';
     const dietarySelect2 = document.getElementById('rsvp-dietary-2');
     const dietary2 = isTwoPasses && dietarySelect2 ? dietarySelect2.value : 'ninguna';
+    const songInput2 = document.getElementById('rsvp-song-2');
+    const song2 = isTwoPasses && songInput2 ? (songInput2.value || '').trim() : '';
+
+    // Shared message
+    const messageInput = document.getElementById('rsvp-message');
+    const message = (messageInput ? messageInput.value : '').trim();
 
     if (!name1) {
       alert('Por favor ingresa tu nombre y apellido para confirmar.');
@@ -203,7 +228,8 @@
       attendance2: attendance2,
       dietary: dietary1,
       dietary2: isTwoPasses ? dietary2 : '',
-      song: song,
+      song: song1,
+      song2: isTwoPasses ? song2 : '',
       message: message,
       code: reservationCode,
       invCode: invitationData ? invitationData.code : '',
@@ -241,16 +267,20 @@
       }
 
       if (passCountEl) {
-        passCountEl.textContent = `${confirmedCount} Persona${confirmedCount > 1 ? 's (Pareja)' : ' (Individual)'}`;
+        passCountEl.textContent = `${confirmedCount} Persona${confirmedCount > 1 ? 's' : ''}`;
       }
 
       if (passCodeEl) passCodeEl.textContent = reservationCode;
 
       // Dieta display
       let dietarySummary = [];
-      if (dietary1 && dietary1 !== 'ninguna') dietarySummary.push(`${name1}: ${dietarySelect1 ? dietarySelect1.options[dietarySelect1.selectedIndex].text : dietary1}`);
+      if (attendance1 === 'si' && dietary1 && dietary1 !== 'ninguna') {
+        const dText1 = dietarySelect1 ? dietarySelect1.options[dietarySelect1.selectedIndex].text : dietary1;
+        dietarySummary.push(`${name1}: ${dText1}`);
+      }
       if (isTwoPasses && attendance2 === 'si' && dietary2 && dietary2 !== 'ninguna') {
-        dietarySummary.push(`${name2}: ${dietarySelect2 ? dietarySelect2.options[dietarySelect2.selectedIndex].text : dietary2}`);
+        const dText2 = dietarySelect2 ? dietarySelect2.options[dietarySelect2.selectedIndex].text : dietary2;
+        dietarySummary.push(`${name2}: ${dText2}`);
       }
 
       if (dietarySummary.length > 0 && passDietaryRow && passDietaryVal) {
@@ -260,9 +290,14 @@
         passDietaryRow.style.display = 'none';
       }
 
-      if (song && passSongRow && passSongVal) {
+      // Song display (both songs)
+      let songsSummary = [];
+      if (song1) songsSummary.push(isTwoPasses && song2 ? `${name1}: "${song1}"` : `"${song1}"`);
+      if (isTwoPasses && song2) songsSummary.push(`${name2}: "${song2}"`);
+
+      if (songsSummary.length > 0 && passSongRow && passSongVal) {
         passSongRow.style.display = 'flex';
-        passSongVal.textContent = song;
+        passSongVal.textContent = songsSummary.join(' • ');
       } else if (passSongRow) {
         passSongRow.style.display = 'none';
       }

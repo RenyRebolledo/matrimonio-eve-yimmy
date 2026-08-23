@@ -500,93 +500,112 @@
           </div>
 
           <form class="rsvp-form" id="rsvp-form" onsubmit="handleRsvpSubmit(event); return false;">
-            <!-- INVITADO 1 -->
-            <div class="form-group" id="group-guest-1">
-              <label for="rsvp-name" id="lbl-rsvp-name">Tu Nombre y Apellido *</label>
-              <input type="text" id="rsvp-name" name="name" placeholder="Ej.: Marcela González" required>
-            </div>
+            <!-- BLOQUE INVITADO 1 -->
+            <div class="guest-card-block" id="group-guest-1">
+              <div class="guest-block-header">
+                <i class="ri-user-heart-line"></i>
+                <h4 id="heading-guest-1">Primer Invitado</h4>
+              </div>
 
-            <!-- ASISTENCIA INVITADO 1 -->
-            <div class="form-group">
-              <label class="form-label" id="lbl-attendance-1">¿Nos acompañarás en nuestro gran día? *</label>
-              <div class="attendance-radios">
-                <label class="radio-card">
-                  <input type="radio" name="attendance" value="si" checked>
-                  <span class="radio-ui">
-                    <i class="ri-check-line"></i>
-                    <strong>¡Sí, los acompañaré feliz!</strong>
-                  </span>
-                </label>
-                <label class="radio-card">
-                  <input type="radio" name="attendance" value="no">
-                  <span class="radio-ui">
-                    <i class="ri-close-line"></i>
-                    <strong>No podré ir, pero les mando un abrazo gigante</strong>
-                  </span>
-                </label>
+              <div class="form-group">
+                <label for="rsvp-name" id="lbl-rsvp-name">Tu Nombre y Apellido *</label>
+                <input type="text" id="rsvp-name" name="name" placeholder="Ej.: Cristopher Hormazábal" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" id="lbl-attendance-1">¿Nos acompañarás en nuestro gran día? *</label>
+                <div class="attendance-radios">
+                  <label class="radio-card">
+                    <input type="radio" name="attendance" value="si" checked>
+                    <span class="radio-ui">
+                      <i class="ri-check-line"></i>
+                      <strong>¡Sí, los acompañaré feliz!</strong>
+                    </span>
+                  </label>
+                  <label class="radio-card">
+                    <input type="radio" name="attendance" value="no">
+                    <span class="radio-ui">
+                      <i class="ri-close-line"></i>
+                      <strong>No podré ir, pero les mando un abrazo gigante</strong>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-row" id="attendance-details-group">
+                <div class="form-group">
+                  <label for="rsvp-dietary" id="lbl-rsvp-dietary">Menú Especial / Restricciones</label>
+                  <select id="rsvp-dietary" name="dietary">
+                    <option value="ninguna">Sin restricciones (Menú tradicional)</option>
+                    <option value="vegetariano">Vegetariano</option>
+                    <option value="vegano">Vegano</option>
+                    <option value="celiaco">Celíaco / Sin Gluten</option>
+                    <option value="alergia">Alergia específica (indicar en dedicatoria)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="rsvp-song" id="lbl-rsvp-song">Canción que sugieres para la fiesta</label>
+                  <input type="text" id="rsvp-song" name="song" placeholder="Ej.: Vivir mi vida - Marc Anthony">
+                </div>
               </div>
             </div>
 
-            <!-- INVITADO 2 (SOLO SI LA INVITACIÓN ES PARA 2 PERSONAS) -->
-            <div class="guest-2-container" id="guest-2-container" style="display: none; background: rgba(82, 122, 80, 0.08); border: 1px dashed var(--border-gold); padding: 1.2rem; border-radius: var(--border-radius-card); margin-bottom: 1.2rem;">
-              <h4 style="font-family: var(--font-serif); font-size: 1.05rem; color: var(--text-main); margin-bottom: 0.8rem;">
-                <i class="ri-user-add-line" style="color: var(--gold-dark);"></i> Datos de tu Acompañante / Pareja (Pase 2)
-              </h4>
-              <div class="form-group">
-                <label for="rsvp-name-2">Nombre y Apellido del Acompañante *</label>
-                <input type="text" id="rsvp-name-2" name="name_2" placeholder="Ej.: Roberto González">
+            <!-- BLOQUE INVITADO 2 (SOLO SI LA INVITACIÓN ES PARA 2 PERSONAS) -->
+            <div class="guest-card-block guest-2-container" id="guest-2-container" style="display: none; background: rgba(82, 122, 80, 0.08); border: 1px dashed var(--border-gold); padding: 1.4rem 1.2rem; border-radius: var(--border-radius-card); margin-top: 1.5rem; margin-bottom: 1.5rem;">
+              <div class="guest-block-header">
+                <i class="ri-user-add-line" style="color: var(--gold-dark);"></i>
+                <h4 id="heading-guest-2" style="font-family: var(--font-serif); font-size: 1.15rem; color: var(--text-main); margin-bottom: 0.8rem;">
+                  Segundo Invitado (Acompañante)
+                </h4>
               </div>
+
               <div class="form-group">
-                <label class="form-label">¿Tu acompañante asistirá?</label>
+                <label for="rsvp-name-2" id="lbl-rsvp-name-2">Nombre y Apellido del Acompañante *</label>
+                <input type="text" id="rsvp-name-2" name="name_2" placeholder="Ej.: Reny Rebolledo">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" id="lbl-attendance-2">¿Nos acompañarás en nuestro gran día?</label>
                 <div class="attendance-radios">
                   <label class="radio-card">
                     <input type="radio" name="attendance_2" value="si" checked>
                     <span class="radio-ui">
                       <i class="ri-check-line"></i>
-                      <strong>¡Sí, asistirá feliz!</strong>
+                      <strong>¡Sí, los acompañaré feliz!</strong>
                     </span>
                   </label>
                   <label class="radio-card">
                     <input type="radio" name="attendance_2" value="no">
                     <span class="radio-ui">
                       <i class="ri-close-line"></i>
-                      <strong>No podrá asistir</strong>
+                      <strong>No podré ir, pero les mando un abrazo gigante</strong>
                     </span>
                   </label>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="rsvp-dietary-2">Menú de tu acompañante</label>
-                <select id="rsvp-dietary-2" name="dietary_2">
-                  <option value="ninguna">Sin restricciones (Menú tradicional)</option>
-                  <option value="vegetariano">Vegetariano</option>
-                  <option value="vegano">Vegano</option>
-                  <option value="celiaco">Celíaco / Sin Gluten</option>
-                  <option value="alergia">Alergia específica</option>
-                </select>
+
+              <div class="form-row" id="attendance-details-group-2">
+                <div class="form-group">
+                  <label for="rsvp-dietary-2">Menú de tu acompañante</label>
+                  <select id="rsvp-dietary-2" name="dietary_2">
+                    <option value="ninguna">Sin restricciones (Menú tradicional)</option>
+                    <option value="vegetariano">Vegetariano</option>
+                    <option value="vegano">Vegano</option>
+                    <option value="celiaco">Celíaco / Sin Gluten</option>
+                    <option value="alergia">Alergia específica</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="rsvp-song-2">Canción que sugiere tu acompañante</label>
+                  <input type="text" id="rsvp-song-2" name="song_2" placeholder="Ej.: Danza Kuduro - Don Omar">
+                </div>
               </div>
             </div>
 
-            <div class="form-row" id="attendance-details-group">
-              <div class="form-group">
-                <label for="rsvp-dietary" id="lbl-rsvp-dietary">Menú Especial / Restricciones</label>
-                <select id="rsvp-dietary" name="dietary">
-                  <option value="ninguna">Sin restricciones (Menú tradicional)</option>
-                  <option value="vegetariano">Vegetariano</option>
-                  <option value="vegano">Vegano</option>
-                  <option value="celiaco">Celíaco / Sin Gluten</option>
-                  <option value="alergia">Alergia específica (indicar en dedicatoria)</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="rsvp-song">Canción que no puede faltar en la fiesta</label>
-                <input type="text" id="rsvp-song" name="song" placeholder="Ej.: Vivir mi vida - Marc Anthony">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="rsvp-message">Un mensaje o dedicatoria para nosotros</label>
-              <textarea id="rsvp-message" name="message" rows="3" placeholder="Escríbenos unas lindas palabras..."></textarea>
+            <!-- BLOQUE MENSAJE COMPARTIDO DE PARTE DE LOS DOS -->
+            <div class="form-group" style="margin-top: 1.5rem;">
+              <label for="rsvp-message" id="lbl-rsvp-message">Un mensaje o dedicatoria para nosotros (de parte de ustedes)</label>
+              <textarea id="rsvp-message" name="message" rows="3" placeholder="Escríbannos unas lindas palabras..."></textarea>
             </div>
 
             <div class="form-submit-row">
@@ -686,14 +705,14 @@
           </div>
           <div class="ticket-row">
             <span class="t-k">PASE(S):</span>
-            <span class="t-v" id="pass-pases-count">1 Persona (Individual)</span>
+            <span class="t-v" id="pass-pases-count">1 Persona</span>
           </div>
           <div class="ticket-row" id="pass-dietary-row" style="display: none;">
             <span class="t-k">MENÚ:</span>
             <span class="t-v" id="pass-dietary-val">—</span>
           </div>
           <div class="ticket-row" id="pass-song-row" style="display: none;">
-            <span class="t-k">CANCIÓN:</span>
+            <span class="t-k">CANCIÓN(ES):</span>
             <span class="t-v" id="pass-song-val">—</span>
           </div>
           <div class="ticket-row">
@@ -709,7 +728,7 @@
         <!-- Banner especial para sorteo -->
         <div class="ticket-special-notice">
           <i class="ri-gift-line"></i>
-          <span>¡Guarda este código porque se vienen cositas! 🎁✨ Participarás en los sorteos y sorpresas durante la boda.</span>
+          <span>¡Guarda este código porque se vienen cositas! 🎁✨</span>
         </div>
 
         <div class="ticket-footer-seal">
@@ -931,19 +950,19 @@
                   <label for="inv-type">Tipo de Invitación *</label>
                   <select id="inv-type" required>
                     <option value="1">1 Persona (Individual / Sin Acompañante)</option>
-                    <option value="2">2 Personas (Pareja / Con Acompañante)</option>
+                    <option value="2">2 Personas (Con Acompañante)</option>
                   </select>
                 </div>
                 <div class="form-group">
                   <label for="inv-name-1">Nombre Invitado 1 *</label>
-                  <input type="text" id="inv-name-1" placeholder="Ej.: Tía Carmen Soto" required>
+                  <input type="text" id="inv-name-1" placeholder="Ej.: Cristopher Hormazábal" required>
                 </div>
               </div>
 
               <div class="form-row" id="inv-name-2-group" style="display: none;">
                 <div class="form-group">
-                  <label for="inv-name-2">Nombre Invitado 2 (Pareja / Acompañante) *</label>
-                  <input type="text" id="inv-name-2" placeholder="Ej.: Tío Roberto González">
+                  <label for="inv-name-2">Nombre Invitado 2 (Acompañante) *</label>
+                  <input type="text" id="inv-name-2" placeholder="Ej.: Reny Rebolledo">
                 </div>
                 <div class="form-group">
                   <label for="inv-phone">Teléfono / WhatsApp (Opcional)</label>

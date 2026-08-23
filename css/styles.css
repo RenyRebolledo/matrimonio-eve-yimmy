@@ -2157,6 +2157,28 @@ body.theme-florido .ch-num {
   border-color: var(--gold-primary);
 }
 
+.guest-card-block {
+  margin-bottom: 1.5rem;
+}
+.guest-block-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(28, 27, 26, 0.1);
+}
+.guest-block-header i {
+  font-size: 1.25rem;
+  color: var(--gold-dark);
+}
+.guest-block-header h4 {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--text-main);
+  margin: 0;
+}
+
 .form-submit-row {
   margin-top: 1.5rem;
   text-align: center;
