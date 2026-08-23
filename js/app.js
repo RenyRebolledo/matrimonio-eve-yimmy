@@ -343,7 +343,7 @@ function initBankModal() {
 
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
-      const textToCopy = `DATOS DE TRANSFERENCIA MATRIMONIO EVELYN & YIMMY\nTitulares: Evelyn López & Yimmy Salgado\nRUT: 12.345.678-9\nBanco: Banco de Chile\nTipo de Cuenta: Cuenta Corriente\nN°: 00-123-45678-90\nEmail: boda.evelyn.yimmy@gmail.com`;
+      const textToCopy = `DATOS DE TRANSFERENCIA DIRECTA MATRIMONIO EVELYN & YIMMY\nBanco: BancoEstado\nTipo de Cuenta: Cuenta Vista\nN° de Cuenta: 15789104\nRUT: 15.789.104-9\nTitular: Yimmy Salgado\nEmail: Yimsalgado@gmail.com`;
       navigator.clipboard.writeText(textToCopy).then(() => {
         copyBtn.innerHTML = '<i class="ri-check-line"></i> ¡Datos Copiados!';
         setTimeout(() => {
