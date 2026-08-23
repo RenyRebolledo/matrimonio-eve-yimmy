@@ -154,11 +154,6 @@
     if (btnDownloadAllPhotos) {
       btnDownloadAllPhotos.addEventListener('click', downloadAllPhotosBulk);
     }
-
-    const btnQuickDownload = document.getElementById('btn-quick-download-photos');
-    if (btnQuickDownload) {
-      btnQuickDownload.addEventListener('click', downloadAllPhotosBulk);
-    }
   }
 
   function showLoginForm() {
@@ -324,8 +319,8 @@
           </td>
           <td>
             <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-              <button class="btn-dl-single btn-copy-inv-link" data-link="${escapeHtml(link)}" data-n1="${escapeHtml(inv.name1)}" data-n2="${escapeHtml(inv.name2 || '')}" style="background: #25D366; color: #fff;">
-                <i class="ri-whatsapp-line"></i> <span>Copiar Mensaje WhatsApp</span>
+              <button class="btn-dl-single btn-copy-inv-link" data-link="${escapeHtml(link)}" data-n1="${escapeHtml(inv.name1)}" data-n2="${escapeHtml(inv.name2 || '')}" data-phone="${escapeHtml(inv.phone || '')}" style="background: #25D366; color: #fff;">
+                <i class="ri-whatsapp-line"></i> <span>Enviar WhatsApp</span>
               </button>
               <a href="${escapeHtml(link)}" target="_blank" class="btn-dl-single" style="background: var(--bg-dark); color: #fff;">
                 <i class="ri-external-link-line"></i> <span>Ver (OK)</span>
@@ -347,6 +342,7 @@
         const link = btn.getAttribute('data-link');
         const n1 = btn.getAttribute('data-n1');
         const n2 = btn.getAttribute('data-n2');
+        const phone = btn.getAttribute('data-phone') || '';
 
         const isPlural = !!n2;
         const greeting = isPlural ? `¡Hola ${n1} y ${n2}! ✨` : `¡Hola ${n1}! ✨`;
@@ -355,12 +351,28 @@
 
         const waMsg = `${greeting}\nCon muchísima alegría queremos ${verb} a nuestro matrimonio en Casa Pirque el sábado 21 de noviembre de 2026.\n\nAquí tienes tu invitación con todos los detalles para que confirmes tu asistencia:\n👉 ${link}\n\n${waitVerb}\n— Evelyn & Yimmy`;
 
+        // Clean phone number for wa.me
+        let cleanPhone = phone.replace(/\D/g, '');
+        if (cleanPhone.length === 9 && cleanPhone.startsWith('9')) {
+          cleanPhone = '56' + cleanPhone;
+        } else if (cleanPhone.length === 8 && cleanPhone.startsWith('9')) {
+          cleanPhone = '56' + cleanPhone;
+        }
+
+        const waUrl = cleanPhone 
+          ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}` 
+          : `https://api.whatsapp.com/send?text=${encodeURIComponent(waMsg)}`;
+
+        // Copy to clipboard as backup
         navigator.clipboard.writeText(waMsg).then(() => {
-          btn.innerHTML = '<i class="ri-check-line"></i> <span>¡Mensaje Copiado!</span>';
+          btn.innerHTML = '<i class="ri-check-line"></i> <span>¡Abriendo WhatsApp!</span>';
           setTimeout(() => {
-            btn.innerHTML = '<i class="ri-whatsapp-line"></i> <span>Copiar Mensaje WhatsApp</span>';
+            btn.innerHTML = '<i class="ri-whatsapp-line"></i> <span>Enviar WhatsApp</span>';
           }, 3000);
         });
+
+        // Open WhatsApp direct link
+        window.open(waUrl, '_blank');
       });
     });
 

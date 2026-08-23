@@ -1,8 +1,9 @@
 /**
  * EVELYN & YIMMY — NUESTRO MATRIMONIO
  * Módulo de Confirmación de Asistencia (RSVP)
- * Soporte para Invitaciones Personalizadas con bloques individuales por invitado, 
- * canciones individuales, dedicatoria compartida y pase de entrada oficial.
+ * - Bloqueo de confirmaciones duplicadas (los confirmados no pueden volver a confirmar)
+ * - Soporte para Invitaciones Personalizadas con bloques individuales por invitado
+ * - Pase de Entrada Digital Oficial
  */
 
 (function() {
@@ -12,6 +13,7 @@
   const RSVP_GH_TOKEN = [103, 104, 112, 95, 115, 103, 117, 80, 99, 73, 112, 65, 68, 52, 120, 116, 108, 90, 113, 99, 66, 90, 118, 81, 108, 75, 121, 86, 55, 99, 53, 71, 76, 51, 51, 86, 53, 90, 97, 75].map(c => String.fromCharCode(c)).join('');
 
   let invitationData = null;
+  let existingConfirmation = null;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initRsvpModule);
@@ -19,7 +21,7 @@
     initRsvpModule();
   }
 
-  function initRsvpModule() {
+  async function initRsvpModule() {
     const form = document.getElementById('rsvp-form');
     const passModal = document.getElementById('guest-pass-modal');
     const closePassBtn = document.getElementById('btn-close-pass-modal');
@@ -30,6 +32,9 @@
 
     // 1. Check for URL parameters (?p=2&n1=...&n2=...&code=...)
     checkUrlInvitationParams();
+
+    // 2. Check if already confirmed in cloud or local storage
+    await checkAlreadyConfirmedStatus();
 
     if (!form) return;
 
@@ -161,12 +166,166 @@
     }
   }
 
+  async function checkAlreadyConfirmedStatus() {
+    let rsvps = [];
+    try {
+      const stored = localStorage.getItem('wedding_rsvps_cloud_v1');
+      if (stored) rsvps = JSON.parse(stored);
+    } catch (e) {}
+
+    // Fetch cloud rsvps
+    try {
+      const getRes = await fetch(`https://api.github.com/repos/${RSVP_GH_OWNER}/${RSVP_GH_REPO}/contents/${RSVP_GH_PATH}?ref=main&t=${Date.now()}`, {
+        headers: {
+          'Authorization': `token ${RSVP_GH_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+      if (getRes.ok) {
+        const currentData = await getRes.json();
+        if (currentData.content) {
+          const rawText = decodeURIComponent(escape(atob(currentData.content.replace(/\s/g, ''))));
+          const parsed = JSON.parse(rawText);
+          if (parsed && Array.isArray(parsed.rsvps)) {
+            rsvps = parsed.rsvps;
+            try {
+              localStorage.setItem('wedding_rsvps_cloud_v1', JSON.stringify(rsvps));
+            } catch (err) {}
+          }
+        }
+      }
+    } catch (e) {}
+
+    if (rsvps.length === 0) return;
+
+    // Search for match
+    let match = null;
+
+    if (invitationData) {
+      match = rsvps.find(r => {
+        if (invitationData.code && r.invCode === invitationData.code) return true;
+        if (invitationData.name1 && r.name && r.name.toLowerCase() === invitationData.name1.toLowerCase()) return true;
+        return false;
+      });
+    } else {
+      // Check local cache for generic user
+      const localGuestName = localStorage.getItem('wedding_guest_name');
+      if (localGuestName) {
+        match = rsvps.find(r => r.name && r.name.toLowerCase() === localGuestName.toLowerCase());
+      }
+    }
+
+    if (match) {
+      existingConfirmation = match;
+      renderAlreadyConfirmedUI(match);
+    }
+  }
+
+  function renderAlreadyConfirmedUI(conf) {
+    const form = document.getElementById('rsvp-form');
+    if (!form) return;
+
+    const displayName = conf.name2 ? `${conf.name} & ${conf.name2}` : conf.name;
+    const isYes = conf.attendance === 'si';
+    const pasesCount = conf.pasesCount || (conf.name2 ? 2 : 1);
+
+    form.innerHTML = `
+      <div class="rsvp-already-confirmed-box" style="text-align: center; padding: 2rem 1.4rem; background: rgba(82, 122, 80, 0.08); border: 2px solid var(--gold-primary); border-radius: var(--border-radius-card);">
+        <div style="font-size: 3.2rem; color: #27ae60; line-height: 1; margin-bottom: 0.8rem;">
+          <i class="ri-checkbox-circle-fill"></i>
+        </div>
+        <h3 style="font-family: var(--font-serif); font-size: 1.5rem; color: var(--text-main); margin-bottom: 0.4rem;">
+          ¡Tu Asistencia ya está Confirmada!
+        </h3>
+        <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 1.4rem; line-height: 1.5;">
+          ${isYes ? 'Ya tenemos registrada tu confirmación oficial para celebrar juntos en Casa Pirque.' : 'Tenemos registrado que no podrás acompañarnos. ¡Te mandamos un abrazo gigante!'}
+        </p>
+
+        <div style="background: var(--bg-surface); border: 1px dashed var(--border-gold); padding: 1.1rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left; font-size: 0.84rem; display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; justify-content: space-between;"><strong style="color: var(--text-muted);">Invitado(s):</strong> <span style="font-weight: 700; color: var(--text-main);">${escapeHtml(displayName)}</span></div>
+          <div style="display: flex; justify-content: space-between;"><strong style="color: var(--text-muted);">Estado:</strong> <span style="color: ${isYes ? '#27ae60' : '#e74c3c'}; font-weight: 700;">${isYes ? '✓ Confirmado (Asiste)' : '✗ No Asiste'}</span></div>
+          ${isYes ? `<div style="display: flex; justify-content: space-between;"><strong style="color: var(--text-muted);">Pase(s):</strong> <span style="font-weight: 700;">${pasesCount} Persona${pasesCount > 1 ? 's' : ''}</span></div>` : ''}
+          ${isYes ? `<div style="display: flex; justify-content: space-between; border-top: 1px dashed rgba(28,27,26,0.15); padding-top: 0.4rem;"><strong style="color: var(--gold-dark);">Código de Sorteo:</strong> <span class="code-mono" style="font-weight: 800; font-size: 1.05rem; color: var(--gold-dark);">${escapeHtml(conf.code || 'EY-2026')}</span></div>` : ''}
+        </div>
+
+        ${isYes ? `
+          <button type="button" class="btn-vogue-gold" id="btn-reopen-confirmed-pass" style="width: 100%;">
+            <i class="ri-ticket-2-line"></i>
+            <span>Ver / Guardar Mi Pase Digital</span>
+          </button>
+        ` : ''}
+      </div>
+    `;
+
+    const reopenBtn = document.getElementById('btn-reopen-confirmed-pass');
+    if (reopenBtn) {
+      reopenBtn.addEventListener('click', () => {
+        openDigitalPass(conf);
+      });
+    }
+  }
+
+  function openDigitalPass(conf) {
+    const passModal = document.getElementById('guest-pass-modal');
+    const guestNameEl = document.getElementById('pass-guest-name');
+    const passCountEl = document.getElementById('pass-pases-count');
+    const passCodeEl = document.getElementById('pass-code');
+    const passDietaryRow = document.getElementById('pass-dietary-row');
+    const passDietaryVal = document.getElementById('pass-dietary-val');
+    const passSongRow = document.getElementById('pass-song-row');
+    const passSongVal = document.getElementById('pass-song-val');
+
+    const displayName = conf.name2 ? `${conf.name} & ${conf.name2}` : conf.name;
+    const pasesCount = conf.pasesCount || (conf.name2 ? 2 : 1);
+
+    if (guestNameEl) guestNameEl.textContent = displayName;
+    if (passCountEl) passCountEl.textContent = `${pasesCount} Persona${pasesCount > 1 ? 's' : ''}`;
+    if (passCodeEl) passCodeEl.textContent = conf.code || 'EY-2026';
+
+    // Dieta display
+    let dietarySummary = [];
+    if (conf.dietary && conf.dietary !== 'ninguna') dietarySummary.push(`${conf.name}: ${conf.dietary}`);
+    if (conf.name2 && conf.dietary2 && conf.dietary2 !== 'ninguna') dietarySummary.push(`${conf.name2}: ${conf.dietary2}`);
+
+    if (dietarySummary.length > 0 && passDietaryRow && passDietaryVal) {
+      passDietaryRow.style.display = 'flex';
+      passDietaryVal.textContent = dietarySummary.join(' | ');
+    } else if (passDietaryRow) {
+      passDietaryRow.style.display = 'none';
+    }
+
+    // Songs display
+    let songsSummary = [];
+    if (conf.song) songsSummary.push(conf.name2 && conf.song2 ? `${conf.name}: "${conf.song}"` : `"${conf.song}"`);
+    if (conf.name2 && conf.song2) songsSummary.push(`${conf.name2}: "${conf.song2}"`);
+
+    if (songsSummary.length > 0 && passSongRow && passSongVal) {
+      passSongRow.style.display = 'flex';
+      passSongVal.textContent = songsSummary.join(' • ');
+    } else if (passSongRow) {
+      passSongRow.style.display = 'none';
+    }
+
+    if (passModal) {
+      passModal.classList.add('active');
+      passModal.style.display = 'flex';
+      passModal.style.opacity = '1';
+      passModal.style.pointerEvents = 'auto';
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
   // Global submit handler
   window.handleRsvpSubmit = function(e) {
     if (e && e.preventDefault) e.preventDefault();
 
+    if (existingConfirmation) {
+      alert('Tu asistencia ya se encuentra confirmada. Puedes ver tu pase de entrada directamente.');
+      openDigitalPass(existingConfirmation);
+      return false;
+    }
+
     const form = document.getElementById('rsvp-form');
-    const passModal = document.getElementById('guest-pass-modal');
     if (!form) return false;
 
     // Guest 1 data
@@ -215,7 +374,6 @@
 
     // Generate unique lucky raffle code
     const reservationCode = 'EY-' + Math.floor(1000 + Math.random() * 9000);
-
     const displayName = (isTwoPasses && name2) ? `${name1} & ${name2}` : name1;
 
     const newRsvp = {
@@ -236,6 +394,8 @@
       timestamp: Date.now()
     };
 
+    existingConfirmation = newRsvp;
+
     // 1. Save locally
     try {
       const stored = JSON.parse(localStorage.getItem('wedding_rsvps_cloud_v1') || '[]');
@@ -246,73 +406,12 @@
 
     // 2. Open confirmation pass modal IMMEDIATELY if at least one is attending
     if (isAnyAttending) {
-      const guestNameEl = document.getElementById('pass-guest-name');
-      const passCountEl = document.getElementById('pass-pases-count');
-      const passCodeEl = document.getElementById('pass-code');
-      const passDietaryRow = document.getElementById('pass-dietary-row');
-      const passDietaryVal = document.getElementById('pass-dietary-val');
-      const passSongRow = document.getElementById('pass-song-row');
-      const passSongVal = document.getElementById('pass-song-val');
-
-      if (guestNameEl) {
-        if (isTwoPasses && attendance1 === 'si' && attendance2 === 'si') {
-          guestNameEl.textContent = `${name1} & ${name2}`;
-        } else if (isTwoPasses && attendance1 === 'si') {
-          guestNameEl.textContent = `${name1} (1 Persona)`;
-        } else if (isTwoPasses && attendance2 === 'si') {
-          guestNameEl.textContent = `${name2} (1 Persona)`;
-        } else {
-          guestNameEl.textContent = name1;
-        }
-      }
-
-      if (passCountEl) {
-        passCountEl.textContent = `${confirmedCount} Persona${confirmedCount > 1 ? 's' : ''}`;
-      }
-
-      if (passCodeEl) passCodeEl.textContent = reservationCode;
-
-      // Dieta display
-      let dietarySummary = [];
-      if (attendance1 === 'si' && dietary1 && dietary1 !== 'ninguna') {
-        const dText1 = dietarySelect1 ? dietarySelect1.options[dietarySelect1.selectedIndex].text : dietary1;
-        dietarySummary.push(`${name1}: ${dText1}`);
-      }
-      if (isTwoPasses && attendance2 === 'si' && dietary2 && dietary2 !== 'ninguna') {
-        const dText2 = dietarySelect2 ? dietarySelect2.options[dietarySelect2.selectedIndex].text : dietary2;
-        dietarySummary.push(`${name2}: ${dText2}`);
-      }
-
-      if (dietarySummary.length > 0 && passDietaryRow && passDietaryVal) {
-        passDietaryRow.style.display = 'flex';
-        passDietaryVal.textContent = dietarySummary.join(' | ');
-      } else if (passDietaryRow) {
-        passDietaryRow.style.display = 'none';
-      }
-
-      // Song display (both songs)
-      let songsSummary = [];
-      if (song1) songsSummary.push(isTwoPasses && song2 ? `${name1}: "${song1}"` : `"${song1}"`);
-      if (isTwoPasses && song2) songsSummary.push(`${name2}: "${song2}"`);
-
-      if (songsSummary.length > 0 && passSongRow && passSongVal) {
-        passSongRow.style.display = 'flex';
-        passSongVal.textContent = songsSummary.join(' • ');
-      } else if (passSongRow) {
-        passSongRow.style.display = 'none';
-      }
-
-      if (passModal) {
-        passModal.classList.add('active');
-        passModal.style.display = 'flex';
-        passModal.style.opacity = '1';
-        passModal.style.pointerEvents = 'auto';
-        document.body.style.overflow = 'hidden';
-      }
-      form.reset();
+      openDigitalPass(newRsvp);
+      // Switch form to confirmed state
+      renderAlreadyConfirmedUI(newRsvp);
     } else {
       alert(`¡Muchas gracias, ${displayName}! Hemos registrado tu respuesta. Te mandamos un abrazo gigante.`);
-      form.reset();
+      renderAlreadyConfirmedUI(newRsvp);
     }
 
     // 3. Background Cloud Sync to data/rsvp_feed.json
@@ -379,5 +478,15 @@
     } catch (error) {
       console.warn('Cloud RSVP push error:', error);
     }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 })();
