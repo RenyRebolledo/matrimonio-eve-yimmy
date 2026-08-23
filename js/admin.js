@@ -417,6 +417,15 @@
       const namesShow = r.name2 ? `${escapeHtml(r.name)} &amp; ${escapeHtml(r.name2)}` : escapeHtml(r.name);
       const pasesCount = r.pasesCount || (r.name2 ? 2 : 1);
 
+      let songsDisplay = '—';
+      if (r.song && r.song2) {
+        songsDisplay = `<span style="display:block;"><strong>1:</strong> ${escapeHtml(r.song)}</span><span style="display:block; margin-top: 2px;"><strong>2:</strong> ${escapeHtml(r.song2)}</span>`;
+      } else if (r.song) {
+        songsDisplay = escapeHtml(r.song);
+      } else if (r.song2) {
+        songsDisplay = escapeHtml(r.song2);
+      }
+
       return `
         <tr>
           <td style="font-weight: 700;">${index + 1}. ${namesShow}</td>
@@ -430,7 +439,7 @@
           <td>
             <small>${escapeHtml(r.dietary && r.dietary !== 'ninguna' ? r.dietary : 'Tradicional')}${r.dietary2 && r.dietary2 !== 'ninguna' ? ' / ' + escapeHtml(r.dietary2) : ''}</small>
           </td>
-          <td><small>${escapeHtml(r.song || '—')}</small></td>
+          <td><small>${songsDisplay}</small></td>
           <td class="cell-message" title="${escapeHtml(r.message || '')}">
             <small>${escapeHtml(r.message || '—')}</small>
           </td>
@@ -446,7 +455,7 @@
       return;
     }
 
-    const headers = ['Nombre_1', 'Nombre_2', 'Asistencia', 'Pases', 'Codigo_Pase', 'Menu_1', 'Menu_2', 'Cancion', 'Mensaje_Dedicatoria', 'Fecha_Registro'];
+    const headers = ['Nombre_1', 'Nombre_2', 'Asistencia', 'Pases', 'Codigo_Pase', 'Menu_1', 'Menu_2', 'Cancion_1', 'Cancion_2', 'Mensaje_Dedicatoria', 'Fecha_Registro'];
     const rows = adminRsvps.map(r => [
       `"${(r.name || '').replace(/"/g, '""')}"`,
       `"${(r.name2 || '').replace(/"/g, '""')}"`,
@@ -456,6 +465,7 @@
       `"${(r.dietary || '').replace(/"/g, '""')}"`,
       `"${(r.dietary2 || '').replace(/"/g, '""')}"`,
       `"${(r.song || '').replace(/"/g, '""')}"`,
+      `"${(r.song2 || '').replace(/"/g, '""')}"`,
       `"${(r.message || '').replace(/"/g, '""')}"`,
       r.timestamp ? new Date(r.timestamp).toLocaleString('es-CL') : ''
     ]);
