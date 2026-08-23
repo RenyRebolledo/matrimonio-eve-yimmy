@@ -302,11 +302,11 @@
       const namesDisplay = inv.name2 ? `${escapeHtml(inv.name1)} &amp; ${escapeHtml(inv.name2)}` : escapeHtml(inv.name1);
 
       const isPlural = !!inv.name2;
-      const greeting = isPlural ? `¡Hola ${inv.name1} y ${inv.name2}! ✨` : `¡Hola ${inv.name1}! ✨`;
+      const greeting = isPlural ? `¡Hola ${inv.name1} y ${inv.name2}!` : `¡Hola ${inv.name1}!`;
       const verb = isPlural ? 'invitarlos' : 'invitarte';
-      const waitVerb = isPlural ? '¡Los esperamos con todo nuestro cariño! 🥂🌿' : '¡Te esperamos con todo nuestro cariño! 🥂🌿';
+      const waitVerb = isPlural ? '¡Los esperamos con todo nuestro cariño!' : '¡Te esperamos con todo nuestro cariño!';
 
-      const waMsg = `${greeting}\nCon muchísima alegría queremos ${verb} a nuestro matrimonio en Casa Pirque el sábado 21 de noviembre de 2026.\n\nAquí tienes tu invitación con todos los detalles para que confirmes tu asistencia:\n👉 ${link}\n\n${waitVerb}\n— Evelyn & Yimmy`;
+      const waMsg = `${greeting}\nCon muchísima alegría queremos ${verb} a nuestro matrimonio en Casa Pirque el sábado 21 de noviembre de 2026.\n\nAquí tienes tu invitación con todos los detalles para que confirmes tu asistencia:\n${link}\n\n${waitVerb}\n— Evelyn & Yimmy`;
 
       // Clean phone number for direct wa.me
       let cleanPhone = (inv.phone || '').replace(/\D/g, '');
