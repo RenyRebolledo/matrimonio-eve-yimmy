@@ -204,14 +204,13 @@
     if (invitationData) {
       match = rsvps.find(r => {
         if (invitationData.code && r.invCode === invitationData.code) return true;
-        if (invitationData.name1 && r.name && r.name.toLowerCase() === invitationData.name1.toLowerCase()) return true;
         return false;
       });
     } else {
-      // Check local cache for generic user
-      const localGuestName = localStorage.getItem('wedding_guest_name');
-      if (localGuestName) {
-        match = rsvps.find(r => r.name && r.name.toLowerCase() === localGuestName.toLowerCase());
+      // Check local cache for generic visit (unlinked)
+      const localCode = localStorage.getItem('wedding_confirmed_generic_code');
+      if (localCode) {
+        match = rsvps.find(r => r.code === localCode);
       }
     }
 

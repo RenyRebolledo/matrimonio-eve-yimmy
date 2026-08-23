@@ -301,6 +301,25 @@
       const link = generatePersonalizedUrl(inv);
       const namesDisplay = inv.name2 ? `${escapeHtml(inv.name1)} &amp; ${escapeHtml(inv.name2)}` : escapeHtml(inv.name1);
 
+      const isPlural = !!inv.name2;
+      const greeting = isPlural ? `¡Hola ${inv.name1} y ${inv.name2}! ✨` : `¡Hola ${inv.name1}! ✨`;
+      const verb = isPlural ? 'invitarlos' : 'invitarte';
+      const waitVerb = isPlural ? '¡Los esperamos con todo nuestro cariño! 🥂🌿' : '¡Te esperamos con todo nuestro cariño! 🥂🌿';
+
+      const waMsg = `${greeting}\nCon muchísima alegría queremos ${verb} a nuestro matrimonio en Casa Pirque el sábado 21 de noviembre de 2026.\n\nAquí tienes tu invitación con todos los detalles para que confirmes tu asistencia:\n👉 ${link}\n\n${waitVerb}\n— Evelyn & Yimmy`;
+
+      // Clean phone number for direct wa.me
+      let cleanPhone = (inv.phone || '').replace(/\D/g, '');
+      if (cleanPhone.length === 9 && cleanPhone.startsWith('9')) {
+        cleanPhone = '56' + cleanPhone;
+      } else if (cleanPhone.length === 8 && cleanPhone.startsWith('9')) {
+        cleanPhone = '56' + cleanPhone;
+      }
+
+      const waUrl = cleanPhone 
+        ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}` 
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(waMsg)}`;
+
       return `
         <tr>
           <td style="font-weight: 700;">
@@ -319,10 +338,10 @@
           </td>
           <td>
             <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-              <button class="btn-dl-single btn-copy-inv-link" data-link="${escapeHtml(link)}" data-n1="${escapeHtml(inv.name1)}" data-n2="${escapeHtml(inv.name2 || '')}" data-phone="${escapeHtml(inv.phone || '')}" style="background: #25D366; color: #fff;">
+              <a href="${escapeHtml(waUrl)}" target="_blank" rel="noopener noreferrer" class="btn-dl-single" style="background: #25D366; color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.8rem; border-radius: var(--border-radius-card); font-size: 0.75rem; font-weight: 700;">
                 <i class="ri-whatsapp-line"></i> <span>Enviar WhatsApp</span>
-              </button>
-              <a href="${escapeHtml(link)}" target="_blank" class="btn-dl-single" style="background: var(--bg-dark); color: #fff;">
+              </a>
+              <a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" class="btn-dl-single" style="background: var(--bg-dark); color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.8rem; border-radius: var(--border-radius-card); font-size: 0.75rem; font-weight: 700;">
                 <i class="ri-external-link-line"></i> <span>Ver (OK)</span>
               </a>
             </div>
@@ -335,46 +354,6 @@
         </tr>
       `;
     }).join('');
-
-    // Attach copy whatsapp handlers
-    tbody.querySelectorAll('.btn-copy-inv-link').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const link = btn.getAttribute('data-link');
-        const n1 = btn.getAttribute('data-n1');
-        const n2 = btn.getAttribute('data-n2');
-        const phone = btn.getAttribute('data-phone') || '';
-
-        const isPlural = !!n2;
-        const greeting = isPlural ? `¡Hola ${n1} y ${n2}! ✨` : `¡Hola ${n1}! ✨`;
-        const verb = isPlural ? 'invitarlos' : 'invitarte';
-        const waitVerb = isPlural ? '¡Los esperamos con todo nuestro cariño! 🥂🌿' : '¡Te esperamos con todo nuestro cariño! 🥂🌿';
-
-        const waMsg = `${greeting}\nCon muchísima alegría queremos ${verb} a nuestro matrimonio en Casa Pirque el sábado 21 de noviembre de 2026.\n\nAquí tienes tu invitación con todos los detalles para que confirmes tu asistencia:\n👉 ${link}\n\n${waitVerb}\n— Evelyn & Yimmy`;
-
-        // Clean phone number for wa.me
-        let cleanPhone = phone.replace(/\D/g, '');
-        if (cleanPhone.length === 9 && cleanPhone.startsWith('9')) {
-          cleanPhone = '56' + cleanPhone;
-        } else if (cleanPhone.length === 8 && cleanPhone.startsWith('9')) {
-          cleanPhone = '56' + cleanPhone;
-        }
-
-        const waUrl = cleanPhone 
-          ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}` 
-          : `https://api.whatsapp.com/send?text=${encodeURIComponent(waMsg)}`;
-
-        // Copy to clipboard as backup
-        navigator.clipboard.writeText(waMsg).then(() => {
-          btn.innerHTML = '<i class="ri-check-line"></i> <span>¡Abriendo WhatsApp!</span>';
-          setTimeout(() => {
-            btn.innerHTML = '<i class="ri-whatsapp-line"></i> <span>Enviar WhatsApp</span>';
-          }, 3000);
-        });
-
-        // Open WhatsApp direct link
-        window.open(waUrl, '_blank');
-      });
-    });
 
     // Attach delete handlers
     tbody.querySelectorAll('.btn-del-inv').forEach(btn => {
@@ -393,10 +372,8 @@
   }
 
   function isInvitationConfirmed(inv) {
-    return adminRsvps.some(r => {
-      const matchName = r.name && (r.name.toLowerCase().includes(inv.name1.toLowerCase()) || (inv.name2 && r.name.toLowerCase().includes(inv.name2.toLowerCase())));
-      return matchName || r.invCode === inv.id;
-    });
+    if (!inv || !inv.id) return false;
+    return adminRsvps.some(r => r.invCode === inv.id);
   }
 
   function renderAdminRsvps() {
