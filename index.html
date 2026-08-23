@@ -618,9 +618,9 @@
       
       <div class="pass-ticket-render" id="pass-ticket-render">
         <div class="ticket-top">
-          <span class="ticket-sub">MATRIMONIO OFICIAL</span>
+          <span class="ticket-sub">MATRIMONIO OFICIAL • PASE DE ENTRADA</span>
           <h3 class="ticket-title">Evelyn &amp; Yimmy</h3>
-          <span class="ticket-date">21 DE NOVIEMBRE DE 2026 • 11:30 AM</span>
+          <span class="ticket-date">SÁBADO 21 DE NOVIEMBRE DE 2026 • 11:30 AM</span>
         </div>
         <div class="ticket-divider-line"></div>
         <div class="ticket-body">
@@ -629,23 +629,35 @@
             <span class="t-v" id="pass-guest-name">—</span>
           </div>
           <div class="ticket-row">
+            <span class="t-k">ESTADO:</span>
+            <span class="t-v" id="pass-status" style="color: #27ae60;">¡Asistencia Confirmada!</span>
+          </div>
+          <div class="ticket-row">
             <span class="t-k">PASE:</span>
             <span class="t-v" id="pass-pases-count">1 Persona (Individual)</span>
+          </div>
+          <div class="ticket-row" id="pass-dietary-row" style="display: none;">
+            <span class="t-k">MENÚ:</span>
+            <span class="t-v" id="pass-dietary-val">—</span>
+          </div>
+          <div class="ticket-row" id="pass-song-row" style="display: none;">
+            <span class="t-k">CANCIÓN:</span>
+            <span class="t-v" id="pass-song-val">—</span>
           </div>
           <div class="ticket-row">
             <span class="t-k">LUGAR:</span>
             <span class="t-v">Casa Pirque, Chile</span>
           </div>
-          <div class="ticket-row">
-            <span class="t-k">CÓDIGO DE SORTEO:</span>
-            <span class="t-v code-mono" id="pass-code">EY-2026</span>
+          <div class="ticket-row" style="border-top: 1px dashed rgba(28,27,26,0.15); padding-top: 0.5rem; margin-top: 0.3rem;">
+            <span class="t-k" style="font-weight: 700; color: var(--gold-dark);">CÓDIGO DE SORTEO:</span>
+            <span class="t-v code-mono" id="pass-code" style="font-size: 1.15rem; font-weight: 800; color: var(--gold-dark);">EY-2026</span>
           </div>
         </div>
 
         <!-- Banner especial para sorteo -->
         <div class="ticket-special-notice">
           <i class="ri-gift-line"></i>
-          <span>¡Guarda este código porque se vienen cositas! 🎁✨ Participarás en sorteos y sorpresas durante la celebración.</span>
+          <span>¡Guarda este código porque se vienen cositas! 🎁✨ Participarás en los sorteos y sorpresas durante la boda.</span>
         </div>
 
         <div class="ticket-footer-seal">
@@ -659,7 +671,7 @@
           <i class="ri-printer-line"></i>
           <span>Guardar / Imprimir Mi Pase</span>
         </button>
-        <button class="btn-vogue-print btn-copy-pass-btn" id="btn-copy-pass-code" style="margin-top: 0.5rem; background: rgba(0,0,0,0.05); color: var(--text-main); border: 1px solid var(--border-gold);">
+        <button class="btn-vogue-print btn-copy-pass-btn" id="btn-copy-pass-code" style="background: rgba(0,0,0,0.05); color: var(--text-main); border: 1px solid var(--border-gold);">
           <i class="ri-file-copy-line"></i>
           <span>Copiar Mi Código</span>
         </button>

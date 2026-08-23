@@ -1,6 +1,6 @@
 /**
  * EVELYN & YIMMY — NUESTRO MATRIMONIO
- * Módulo de Confirmación de Asistencia (RSVP Individual + Cloud Sync + Pase Digital de Sorteo)
+ * Módulo de Confirmación de Asistencia (RSVP Individual + Pase Digital de Sorteo + Cloud Sync)
  */
 
 const GH_OWNER = 'RenyRebolledo';
@@ -8,15 +8,19 @@ const GH_REPO = 'matrimonio-eve-yimmy';
 const GH_RSVP_PATH = 'data/rsvp_feed.json';
 const GH_AUTH_TOKEN = [103, 104, 112, 95, 115, 103, 117, 80, 99, 73, 112, 65, 68, 52, 120, 116, 108, 90, 113, 99, 66, 90, 118, 81, 108, 75, 121, 86, 55, 99, 53, 71, 76, 51, 51, 86, 53, 90, 97, 75].map(c => String.fromCharCode(c)).join('');
 
-document.addEventListener('DOMContentLoaded', () => {
+// Robust DOM initialization
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initRsvpModule);
+} else {
   initRsvpModule();
-});
+}
 
 function initRsvpModule() {
   const form = document.getElementById('rsvp-form');
   const passModal = document.getElementById('guest-pass-modal');
   const closePassBtn = document.getElementById('btn-close-pass-modal');
   const printPassBtn = document.getElementById('btn-print-pass');
+  const copyCodeBtn = document.getElementById('btn-copy-pass-code');
   const attendanceDetails = document.getElementById('attendance-details-group');
 
   if (!form) return;
@@ -33,6 +37,7 @@ function initRsvpModule() {
     });
   });
 
+  // Close pass modal
   if (closePassBtn && passModal) {
     closePassBtn.addEventListener('click', () => {
       passModal.classList.remove('active');
@@ -49,16 +54,18 @@ function initRsvpModule() {
     });
   }
 
+  // Print Pass
   if (printPassBtn) {
     printPassBtn.addEventListener('click', () => {
       window.print();
     });
   }
 
-  const copyCodeBtn = document.getElementById('btn-copy-pass-code');
+  // Copy Code
   if (copyCodeBtn) {
     copyCodeBtn.addEventListener('click', () => {
-      const code = document.getElementById('pass-code').textContent || '';
+      const codeEl = document.getElementById('pass-code');
+      const code = codeEl ? codeEl.textContent.trim() : '';
       if (code) {
         navigator.clipboard.writeText(code).then(() => {
           copyCodeBtn.innerHTML = '<i class="ri-check-line"></i> <span>¡Código Copiado!</span>';
@@ -70,27 +77,30 @@ function initRsvpModule() {
     });
   }
 
-  form.addEventListener('submit', async (e) => {
+  // RSVP Form Submit
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const nameInput = document.getElementById('rsvp-name');
-    const name = (nameInput.value || '').trim();
-    const attendance = form.querySelector('input[name="attendance"]:checked').value;
-    const dietary = document.getElementById('rsvp-dietary').value || 'ninguna';
-    const song = (document.getElementById('rsvp-song').value || '').trim();
-    const message = (document.getElementById('rsvp-message').value || '').trim();
+    const name = (nameInput ? nameInput.value : '').trim();
+    const attendanceRadio = form.querySelector('input[name="attendance"]:checked');
+    const attendance = attendanceRadio ? attendanceRadio.value : 'si';
+    
+    const dietarySelect = document.getElementById('rsvp-dietary');
+    const dietary = dietarySelect ? dietarySelect.value : 'ninguna';
+    
+    const songInput = document.getElementById('rsvp-song');
+    const song = (songInput ? songInput.value : '').trim();
+    
+    const messageInput = document.getElementById('rsvp-message');
+    const message = (messageInput ? messageInput.value : '').trim();
 
     if (!name) {
       alert('Por favor ingresa tu nombre y apellido para confirmar.');
       return;
     }
 
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `<i class="ri-loader-4-line ri-spin"></i> Guardando confirmación...`;
-
-    // Generate unique lucky raffle code
+    // Generate lucky unique code
     const reservationCode = 'EY-' + Math.floor(1000 + Math.random() * 9000);
 
     const newRsvp = {
@@ -104,7 +114,7 @@ function initRsvpModule() {
       timestamp: Date.now()
     };
 
-    // 1. Save to LocalStorage cache immediately
+    // 1. Save locally
     try {
       const stored = JSON.parse(localStorage.getItem('wedding_rsvps_cloud_v1') || '[]');
       stored.unshift(newRsvp);
@@ -112,15 +122,33 @@ function initRsvpModule() {
       localStorage.setItem('wedding_guest_name', name);
     } catch (err) {}
 
-    // 2. Open Digital Pass Modal IMMEDIATELY (no blocking)
+    // 2. Open confirmation popup immediately
     if (attendance === 'si') {
       const guestNameEl = document.getElementById('pass-guest-name');
       const passCountEl = document.getElementById('pass-pases-count');
       const passCodeEl = document.getElementById('pass-code');
+      const passDietaryRow = document.getElementById('pass-dietary-row');
+      const passDietaryVal = document.getElementById('pass-dietary-val');
+      const passSongRow = document.getElementById('pass-song-row');
+      const passSongVal = document.getElementById('pass-song-val');
 
       if (guestNameEl) guestNameEl.textContent = name;
       if (passCountEl) passCountEl.textContent = '1 Persona (Individual)';
       if (passCodeEl) passCodeEl.textContent = reservationCode;
+
+      if (dietary && dietary !== 'ninguna' && passDietaryRow && passDietaryVal) {
+        passDietaryRow.style.display = 'flex';
+        passDietaryVal.textContent = dietarySelect ? dietarySelect.options[dietarySelect.selectedIndex].text : dietary;
+      } else if (passDietaryRow) {
+        passDietaryRow.style.display = 'none';
+      }
+
+      if (song && passSongRow && passSongVal) {
+        passSongRow.style.display = 'flex';
+        passSongVal.textContent = song;
+      } else if (passSongRow) {
+        passSongRow.style.display = 'none';
+      }
 
       if (passModal) {
         passModal.classList.add('active');
@@ -132,10 +160,7 @@ function initRsvpModule() {
       form.reset();
     }
 
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = originalText;
-
-    // 3. Asynchronously push to Cloud Database (data/rsvp_feed.json)
+    // 3. Background Cloud Sync to data/rsvp_feed.json
     pushRsvpToCloud(newRsvp).catch(err => {
       console.warn('Background RSVP cloud sync notice:', err);
     });
