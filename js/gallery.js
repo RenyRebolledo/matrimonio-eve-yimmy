@@ -154,7 +154,7 @@ function renderChallengeGallery() {
       <div class="gallery-empty-state" style="grid-column: 1 / -1; text-align: center; padding: 2rem 1rem; color: var(--text-muted); background: rgba(0,0,0,0.02); border: 1px dashed var(--border-gold); border-radius: var(--border-radius-card);">
         <i class="ri-camera-lens-line" style="font-size: 2.2rem; color: var(--gold-primary); display: block; margin-bottom: 0.5rem;"></i>
         <p style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">Aún no se han subido fotos para los desafíos fotográficos.</p>
-        <p style="font-size: 0.78rem; margin-top: 0.3rem;">¡Cumple uno de los 12 desafíos de arriba, sube tu foto y compite por el premio de las 19:00 hrs! 🏆✨</p>
+        <p style="font-size: 0.78rem; margin-top: 0.3rem;">¡Cumple uno de los 12 desafíos de arriba, sube tu foto y compite por el premio de las 20:00 hrs! 🏆✨</p>
       </div>
     `;
     return;
