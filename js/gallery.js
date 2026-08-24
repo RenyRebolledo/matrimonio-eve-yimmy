@@ -10,8 +10,8 @@ const GH_REPO = 'matrimonio-eve-yimmy';
 const GH_FILE_PATH = 'data/album_feed.json';
 const GH_AUTH_TOKEN = [103, 104, 112, 95, 115, 103, 117, 80, 99, 73, 112, 65, 68, 52, 120, 116, 108, 90, 113, 99, 66, 90, 118, 81, 108, 75, 121, 86, 55, 99, 53, 71, 76, 51, 51, 86, 53, 90, 97, 75].map(c => String.fromCharCode(c)).join('');
 
-const CLOUD_STORAGE_KEY = 'eve_yimmy_wedding_album_cache_v3';
-const LIKED_PHOTOS_KEY = 'eve_yimmy_liked_photos_v3';
+const CLOUD_STORAGE_KEY = 'eve_yimmy_wedding_album_cache_v4';
+const LIKED_PHOTOS_KEY = 'eve_yimmy_liked_photos_v4';
 
 let activeCategoryFilter = 'invitados';
 let weddingPhotos = [];
@@ -22,46 +22,8 @@ let isSyncingToCloud = false;
 // Expose to window for admin panel
 window.weddingPhotos = weddingPhotos;
 
-// Fallback seed photos
-const DEFAULT_SEED_PHOTOS = [
-  {
-    id: 'seed-1',
-    url: 'assets/images/couple_picnic_portrait.jpg',
-    author: 'Evelyn & Yimmy',
-    caption: '¡Comenzando esta maravillosa etapa juntos! Gracias por acompañarnos. 💍✨',
-    category: 'invitados',
-    likes: 48,
-    timestamp: 1724330000000,
-    comments: [
-      { id: 'c1', author: 'Familia Salgado', text: '¡Qué hermosa pareja! Los queremos mucho ❤️', timestamp: 1724335000000 },
-      { id: 'c2', author: 'Camila & Pedro', text: '¡Felicidades amigos, se ven radiantes! 🎉🥂', timestamp: 1724340000000 }
-    ]
-  },
-  {
-    id: 'seed-2',
-    url: 'assets/images/venue_casapirque.jpg',
-    author: 'Los Novios',
-    caption: 'El hermoso entorno natural de Casa Pirque donde celebraremos este gran día 🏔️🌿',
-    category: 'lugar',
-    likes: 35,
-    timestamp: 1724320000000,
-    comments: [
-      { id: 'c3', author: 'Tía Marcela', text: '¡El lugar es soñado! Ya listos para disfrutar del pasto y la fiesta 🧺✨', timestamp: 1724325000000 }
-    ]
-  },
-  {
-    id: 'seed-3',
-    url: 'assets/images/picnic_lawn.jpg',
-    author: 'Evelyn & Yimmy',
-    caption: 'El rincón del césped listo para el momento manta. ¡No olviden traer la suya! 🧺🌸',
-    category: 'lugar',
-    likes: 52,
-    timestamp: 1724310000000,
-    comments: [
-      { id: 'c4', author: 'Gonzalo', text: '¡Nuestra manta ya está en el auto! Excelente idea 🍾', timestamp: 1724315000000 }
-    ]
-  }
-];
+// Fallback seed photos (empty so album starts 100% clean)
+const DEFAULT_SEED_PHOTOS = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   initGallery();
@@ -85,13 +47,13 @@ function loadLocalCache() {
     const raw = localStorage.getItem(CLOUD_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         weddingPhotos = parsed;
         return;
       }
     }
   } catch (e) {}
-  weddingPhotos = [...DEFAULT_SEED_PHOTOS];
+  weddingPhotos = [];
 }
 
 function saveLocalCache() {
