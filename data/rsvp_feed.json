@@ -1,6 +1,14 @@
 {
   "invitations": [
     {
+      "id": "inv_mt7a1lu8_dgz3",
+      "pases": 1,
+      "name1": "Claudia",
+      "name2": "",
+      "phone": "+56 9 7850 6319",
+      "createdAt": 1787578432208
+    },
+    {
       "id": "inv_mt7a0xcx_q4yh",
       "pases": 1,
       "name1": "Cecilia",
