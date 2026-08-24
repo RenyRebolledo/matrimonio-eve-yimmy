@@ -177,6 +177,7 @@
   }
 
   async function loadAdminData() {
+    let cloudLoaded = false;
     try {
       const url = `https://api.github.com/repos/${ADMIN_GH_OWNER}/${ADMIN_GH_REPO}/contents/${ADMIN_GH_RSVP_PATH}?ref=main&t=${Date.now()}`;
       const response = await fetch(url, {
@@ -192,8 +193,13 @@
           const rawText = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
           const parsed = JSON.parse(rawText);
           if (parsed) {
-            if (Array.isArray(parsed.rsvps)) adminRsvps = parsed.rsvps;
-            if (Array.isArray(parsed.invitations)) adminInvitations = parsed.invitations;
+            cloudLoaded = true;
+            adminRsvps = Array.isArray(parsed.rsvps) ? parsed.rsvps : [];
+            adminInvitations = Array.isArray(parsed.invitations) ? parsed.invitations : [];
+            try {
+              localStorage.setItem('wedding_invitations_cloud_v1', JSON.stringify(adminInvitations));
+              localStorage.setItem('wedding_rsvps_cloud_v1', JSON.stringify(adminRsvps));
+            } catch (err) {}
           }
         }
       }
@@ -201,16 +207,11 @@
       console.warn('Error loading cloud data:', e);
     }
 
-    // Fallback to local storage if cloud is empty
-    if (adminInvitations.length === 0) {
+    // Fallback to local storage ONLY if network/cloud request failed
+    if (!cloudLoaded) {
       try {
         const localInv = localStorage.getItem('wedding_invitations_cloud_v1');
         if (localInv) adminInvitations = JSON.parse(localInv);
-      } catch (e) {}
-    }
-
-    if (adminRsvps.length === 0) {
-      try {
         const localRsvp = localStorage.getItem('wedding_rsvps_cloud_v1');
         if (localRsvp) adminRsvps = JSON.parse(localRsvp);
       } catch (e) {}
@@ -444,9 +445,30 @@
             <small>${escapeHtml(r.message || '—')}</small>
           </td>
           <td><small style="color: #777;">${dateStr}</small></td>
+          <td>
+            <button class="btn-del-rsvp" data-id="${r.id}" title="Eliminar confirmación" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.1rem; padding: 0.3rem;">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+          </td>
         </tr>
       `;
     }).join('');
+
+    // Attach delete RSVP handlers
+    tableBody.querySelectorAll('.btn-del-rsvp').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        if (confirm('¿Seguro que deseas eliminar esta confirmación? El invitado podrá volver a confirmar si lo deseas.')) {
+          adminRsvps = adminRsvps.filter(r => r.id !== id);
+          try {
+            localStorage.setItem('wedding_rsvps_cloud_v1', JSON.stringify(adminRsvps));
+          } catch (e) {}
+          pushAdminCloudData(`[Eliminar Confirmación] ID ${id}`);
+          renderAdminRsvps();
+          renderAdminInvitations();
+        }
+      });
+    });
   }
 
   function exportRsvpsToCSV() {
