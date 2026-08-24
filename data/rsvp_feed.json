@@ -9,16 +9,5 @@
       "createdAt": 1787576552577
     }
   ],
-  "rsvps": [
-    {
-      "id": "rsvp-sample-1",
-      "name": "Evelyn & Yimmy",
-      "attendance": "si",
-      "dietary": "ninguna",
-      "song": "Nuestra canción favorita",
-      "message": "¡Los esperamos con todo el amor del mundo! 💍✨",
-      "code": "EY-NOVIOS",
-      "timestamp": 1724330000000
-    }
-  ]
+  "rsvps": []
 }
