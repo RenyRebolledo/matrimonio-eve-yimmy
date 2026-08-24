@@ -9,5 +9,23 @@
       "createdAt": 1787576552577
     }
   ],
-  "rsvps": []
+  "rsvps": [
+    {
+      "id": "rsvp_1787576935601_r7rj1",
+      "name": "Isaac Aguiar",
+      "name2": "Dennise de la fuente",
+      "pasesCount": 2,
+      "attendance": "si",
+      "attendance1": "si",
+      "attendance2": "si",
+      "dietary": "ninguna",
+      "dietary2": "ninguna",
+      "song": "",
+      "song2": "",
+      "message": "",
+      "code": "EY-8723",
+      "invCode": "inv_mt78xbi9_1fhw",
+      "timestamp": 1787576935601
+    }
+  ]
 }
