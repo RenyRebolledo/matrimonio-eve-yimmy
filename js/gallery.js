@@ -26,7 +26,7 @@ window.weddingPhotos = weddingPhotos;
 const DEFAULT_SEED_PHOTOS = [
   {
     id: 'seed-1',
-    url: 'assets/images/couple_portrait.jpg',
+    url: 'assets/images/couple_picnic_portrait.jpg',
     author: 'Evelyn & Yimmy',
     caption: '¡Comenzando esta maravillosa etapa juntos! Gracias por acompañarnos. 💍✨',
     category: 'invitados',
