@@ -1,6 +1,14 @@
 {
   "invitations": [
     {
+      "id": "inv_mt6h2d4k_cj1r",
+      "pases": 2,
+      "name1": "Eve",
+      "name2": "Yimmy",
+      "phone": "+56 9 9617 8552",
+      "createdAt": 1787529758708
+    },
+    {
       "id": "inv_mt6h0s0j_up60",
       "pases": 1,
       "name1": "Cristopher Hormazábal",
