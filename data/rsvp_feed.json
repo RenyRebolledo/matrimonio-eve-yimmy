@@ -1,14 +1,5 @@
 {
-  "invitations": [
-    {
-      "id": "inv_mt78xbi9_1fhw",
-      "pases": 2,
-      "name1": "Isaac Aguiar",
-      "name2": "Dennise de la fuente",
-      "phone": "+56 9 6169 7185",
-      "createdAt": 1787576552577
-    }
-  ],
+  "invitations": [],
   "rsvps": [
     {
       "id": "rsvp_1787576935601_r7rj1",
