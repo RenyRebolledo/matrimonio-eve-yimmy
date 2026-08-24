@@ -1,5 +1,14 @@
 {
-  "invitations": [],
+  "invitations": [
+    {
+      "id": "inv_mt78v7qr_d61d",
+      "pases": 2,
+      "name1": "Cristopher Hormazábal",
+      "name2": "Reny Rebolledo",
+      "phone": "+56 9 9138 1368",
+      "createdAt": 1787576454387
+    }
+  ],
   "rsvps": [
     {
       "id": "rsvp_1787529918419_swx4v",
