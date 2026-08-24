@@ -1,6 +1,14 @@
 {
   "invitations": [
     {
+      "id": "inv_mt7af2wd_bc93",
+      "pases": 1,
+      "name1": "Constanza",
+      "name2": "",
+      "phone": "+56 9 5003 1547",
+      "createdAt": 1787579060845
+    },
+    {
       "id": "inv_mt7aerri_0o4h",
       "pases": 1,
       "name1": "Cecilia",
