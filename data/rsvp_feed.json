@@ -1,14 +1,5 @@
 {
-  "invitations": [
-    {
-      "id": "inv_mt6ggjua_g5db",
-      "pases": 2,
-      "name1": "reny",
-      "name2": "cris",
-      "phone": "+56997874977",
-      "createdAt": 1787528740978
-    }
-  ],
+  "invitations": [],
   "rsvps": [
     {
       "id": "rsvp_1787529443265_lfvg6",
